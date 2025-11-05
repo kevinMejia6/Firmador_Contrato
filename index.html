@@ -187,44 +187,6 @@
             cursor: pointer;
         }
 
-        .document-preview {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            margin: 20px 0;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .preview-title {
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .preview-section {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .preview-section:last-child {
-            border-bottom: none;
-        }
-
-        .preview-label {
-            font-weight: 600;
-            color: #0066cc;
-            margin-bottom: 5px;
-        }
-
-        .preview-content {
-            color: #333;
-            line-height: 1.6;
-        }
-
         .success-message {
             display: none;
             background: #d4edda;
@@ -286,37 +248,6 @@
                 max-width: 100%;
             }
         }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .tab-button {
-            background: none;
-            border: none;
-            padding: 15px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .tab-button.active {
-            color: #0066cc;
-            border-bottom-color: #0066cc;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -329,12 +260,12 @@
         <div class="content">
             <div class="success-message" id="successMessage">
                 <h3>✓ Documento firmado exitosamente</h3>
-                <p>Se ha enviado una copia a tu correo electrónico</p>
+                <p>Se ha descargado tu PDF y se envió confirmación a tu correo</p>
             </div>
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>Procesando tu firma...</p>
+                <p>Generando tu PDF...</p>
             </div>
 
             <form id="conformityForm">
@@ -471,35 +402,13 @@
                     </div>
                     <div class="canvas-buttons">
                         <button type="button" class="btn-secondary" onclick="clearSignature()">🔄 Limpiar Firma</button>
-                        <button type="button" class="btn-secondary" onclick="previewDocument()">👁️ Vista Previa</button>
-                    </div>
-                </div>
-
-                <!-- VISTA PREVIA -->
-                <div id="documentPreview" class="document-preview" style="display: none;">
-                    <div class="preview-title">DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</div>
-                    <div class="preview-section">
-                        <div class="preview-label">Participante:</div>
-                        <div class="preview-content" id="preview-nombre"></div>
-                    </div>
-                    <div class="preview-section">
-                        <div class="preview-label">Capacitación:</div>
-                        <div class="preview-content" id="preview-capacitacion"></div>
-                    </div>
-                    <div class="preview-section">
-                        <div class="preview-label">Contenidos:</div>
-                        <div class="preview-content" id="preview-contenidos"></div>
-                    </div>
-                    <div class="preview-section">
-                        <div class="preview-label">Monto e Método de Pago:</div>
-                        <div class="preview-content" id="preview-pago"></div>
                     </div>
                 </div>
 
                 <!-- BOTONES FINALES -->
                 <div class="form-section">
                     <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 16px;">
-                        ✓ Firmar y Enviar Conformidad
+                        ✓ Firmar y Descargar PDF
                     </button>
                 </div>
             </form>
@@ -532,6 +441,7 @@
             const y = (e.clientY - rect.top) * (canvas.height / rect.height);
             ctx.beginPath();
             ctx.moveTo(x, y);
+            updateSignatureStatus();
         }
 
         function draw(e) {
@@ -545,7 +455,6 @@
             ctx.strokeStyle = '#333';
             ctx.lineTo(x, y);
             ctx.stroke();
-            updateSignatureStatus();
         }
 
         function handleTouch(e) {
@@ -570,7 +479,6 @@
                 ctx.lineTo(x, y);
                 ctx.stroke();
             }
-            updateSignatureStatus();
         }
 
         function stopDrawing() {
@@ -596,30 +504,11 @@
             updateSignatureStatus();
         }
 
-        function previewDocument() {
-            const preview = document.getElementById('documentPreview');
-            
-            document.getElementById('preview-nombre').textContent = 
-                `${document.getElementById('nombreParticipante').value} - DUI: ${document.getElementById('duiParticipante').value}`;
-            
-            document.getElementById('preview-capacitacion').textContent = 
-                `${document.getElementById('nombreCapacitacion').value} (${document.getElementById('duracionCapacitacion').value}) - ${document.getElementById('fechaCapacitacion').value}`;
-            
-            document.getElementById('preview-contenidos').textContent = 
-                document.getElementById('contenidosCapacitacion').value;
-            
-            document.getElementById('preview-pago').textContent = 
-                `$${document.getElementById('montoCapacitacion').value} - ${document.getElementById('metodoPago').value}`;
-            
-            preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
-            preview.scrollIntoView({ behavior: 'smooth' });
-        }
-
         // Setear la fecha actual
         document.getElementById('fechaParticipante').valueAsDate = new Date();
 
         // Submit form
-        document.getElementById('conformityForm').addEventListener('submit', async (e) => {
+        document.getElementById('conformityForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             if (!hasSignature) {
@@ -630,19 +519,15 @@
             // Mostrar loading
             document.getElementById('loading').classList.add('show');
 
-            // Simular procesamiento (en producción, aquí irías a un servidor)
+            // Generar PDF
             setTimeout(() => {
-                // Generar PDF
                 generatePDF();
-
+                
                 // Mostrar mensaje de éxito
                 document.getElementById('loading').classList.remove('show');
                 document.getElementById('successMessage').classList.add('show');
 
-                // Simular envío de email
-                simulateSendEmail();
-
-                // Reset form
+                // Reset form después de 3 segundos
                 setTimeout(() => {
                     document.getElementById('conformityForm').reset();
                     clearSignature();
@@ -654,34 +539,11 @@
         function generatePDF() {
             const nombre = document.getElementById('nombreParticipante').value;
             const dui = document.getElementById('duiParticipante').value;
-            const element = createPDFContent();
-            
-            // Nombre del archivo con datos del empleado
-            const nombreArchivo = `Conformidad_Capacitacion_${nombre.replace(/\s+/g, '_')}_${dui}_${new Date().toISOString().split('T')[0]}.pdf`;
-            
-            const opt = {
-                margin: 10,
-                filename: nombreArchivo,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
-            };
-            
-            html2pdf().set(opt).save(element);
-        }
-
-        function createPDFContent() {
-            const div = document.createElement('div');
-            div.style.padding = '20px';
-            div.style.fontFamily = 'Arial, sans-serif';
-            div.style.fontSize = '12px';
-            div.style.color = '#333';
-
-            const nombre = document.getElementById('nombreParticipante').value;
-            const dui = document.getElementById('duiParticipante').value;
+            const email = document.getElementById('emailParticipante').value;
             const nombreCapacitacion = document.getElementById('nombreCapacitacion').value;
             const duracion = document.getElementById('duracionCapacitacion').value;
             const instructor = document.getElementById('instructor').value;
+            const fechaCapacitacion = document.getElementById('fechaCapacitacion').value;
             const contenidos = document.getElementById('contenidosCapacitacion').value;
             const objetivos = document.getElementById('objetivosCapacitacion').value;
             const monto = document.getElementById('montoCapacitacion').value;
@@ -689,87 +551,112 @@
             const condicionesPago = document.getElementById('condicionesPago').value;
             const materialesIncluidos = document.getElementById('materialesIncluidos').value;
             const terminosCondiciones = document.getElementById('terminosCondiciones').value;
-
-            // Obtener la firma como imagen
+            const fechaActual = new Date().toLocaleDateString('es-ES');
+            const horaActual = new Date().toLocaleTimeString('es-ES');
             const canvas = document.getElementById('signatureCanvas');
             const signatureImage = canvas.toDataURL('image/png');
 
-            div.innerHTML = `
-                <h1 style="text-align: center; font-size: 18px; margin-bottom: 10px; color: #001f3f;">DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
-                <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 11px;">COPIA PARA EL EMPLEADO</p>
-                
-                <p style="margin-bottom: 20px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
-                <p style="margin-bottom: 20px;"><strong>Fecha de Firma:</strong> ${document.getElementById('fechaParticipante').value}</p>
-                
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">1. DATOS DEL PARTICIPANTE</h2>
-                <p><strong>Nombre Completo:</strong> ${nombre}</p>
-                <p><strong>DUI:</strong> ${dui}</p>
-                <p><strong>Email:</strong> ${document.getElementById('emailParticipante').value}</p>
-                
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">2. INFORMACIÓN DE LA CAPACITACIÓN</h2>
-                <p><strong>Nombre del Curso:</strong> ${nombreCapacitacion}</p>
-                <p><strong>Duración:</strong> ${duracion}</p>
-                <p><strong>Instructor/a:</strong> ${instructor}</p>
-                <p><strong>Fecha de Capacitación:</strong> ${document.getElementById('fechaCapacitacion').value}</p>
-                
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">3. CONTENIDOS BRINDADOS</h2>
-                <p><strong>Temas y Módulos:</strong></p>
-                <p style="line-height: 1.6; white-space: pre-wrap;">${contenidos}</p>
-                
-                <p style="margin-top: 15px;"><strong>Objetivos de la Capacitación:</strong></p>
-                <p style="line-height: 1.6; white-space: pre-wrap;">${objetivos}</p>
-                
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">4. CONDICIONES DE PAGO Y ACCESO</h2>
-                <p><strong>Monto Total:</strong> $${monto}</p>
-                <p><strong>Método de Pago:</strong> ${metodoPago}</p>
-                <p><strong>Condiciones de Pago y Políticas:</strong></p>
-                <p style="line-height: 1.6; white-space: pre-wrap;">${condicionesPago}</p>
-                
-                <p style="margin-top: 15px;"><strong>Materiales Incluidos:</strong></p>
-                <p style="line-height: 1.6; white-space: pre-wrap;">${materialesIncluidos}</p>
-                
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">5. TÉRMINOS Y CONDICIONES</h2>
-                <p style="line-height: 1.6; white-space: pre-wrap; margin-bottom: 20px;">${terminosCondiciones}</p>
-                
-                <h2 style="font-size: 14px; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">6. ACEPTACIÓN Y FIRMA</h2>
-                <p>El suscrito confirma haber leído, entendido y aceptado:</p>
-                <ul style="margin-left: 20px; line-height: 1.8;">
-                    <li>Los contenidos y objetivos de la capacitación</li>
-                    <li>Las condiciones de pago establecidas</li>
-                    <li>Los términos y condiciones generales</li>
-                    <li>Que recibe una copia de este documento</li>
-                </ul>
-                
-                <div style="margin-top: 40px; border-top: 2px solid #ddd; padding-top: 20px;">
-                    <p style="margin-bottom: 10px;"><strong>Firma Digital del Participante:</strong></p>
-                    <img src="${signatureImage}" style="max-width: 400px; height: auto; border: 1px solid #ddd; padding: 5px; margin: 10px 0;">
+            // Crear elemento HTML para PDF
+            const pdfContent = document.createElement('div');
+            pdfContent.innerHTML = `
+                <div style="background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); color: white; padding: 40px; text-align: center;">
+                    <h1 style="margin: 0; font-size: 28px; font-weight: 700;">DOCUMENTO DE CONFORMIDAD</h1>
+                    <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Capacitación y Formación Profesional</p>
                 </div>
-                
-                <div style="margin-top: 30px; background: #f0f0f0; padding: 15px; border-left: 4px solid #001f3f; border-radius: 3px;">
-                    <p style="margin: 0; font-size: 11px; color: #666;">
-                        <strong>AVISO IMPORTANTE:</strong> Este documento ha sido generado digitalmente y incluye la firma digital del participante. 
-                        La copia original se mantiene en los registros de la institución. Esta es una copia para su archivo personal.
-                    </p>
+
+                <div style="background: #f0f4f8; padding: 15px 40px; text-align: center; border-bottom: 2px solid #0d47a1;">
+                    <p style="margin: 0; font-size: 13px; font-weight: 600; color: #0d47a1;">✓ COPIA PARA EL EMPLEADO</p>
                 </div>
-                
-                <p style="margin-top: 30px; text-align: center; font-size: 10px; color: #999;">
-                    Documento generado: ${new Date().toLocaleString('es-ES')}<br>
-                    ID de Transacción: ${Date.now()}
-                </p>
+
+                <div style="padding: 40px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #0d47a1;">
+                        <div>
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Fecha de Emisión</p>
+                            <p style="margin: 5px 0 0 0; font-size: 14px; font-weight: 700; color: #0d47a1;">${fechaActual}</p>
+                        </div>
+                        <div>
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Hora</p>
+                            <p style="margin: 5px 0 0 0; font-size: 14px; font-weight: 700; color: #0d47a1;">${horaActual}</p>
+                        </div>
+                        <div>
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">ID de Transacción</p>
+                            <p style="margin: 5px 0 0 0; font-size: 14px; font-weight: 700; color: #0d47a1;">#${Date.now()}</p>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 14px; color: #fff; background: #0d47a1; padding: 12px 15px; margin: 0 0 15px 0; border-radius: 4px; font-weight: 700;">👤 DATOS DEL PARTICIPANTE</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Nombre Completo</p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #0d47a1;">${nombre}</p>
+                        </div>
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">DUI</p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #0d47a1;">${dui}</p>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 14px; color: #fff; background: #0d47a1; padding: 12px 15px; margin: 0 0 15px 0; border-radius: 4px; font-weight: 700;">📚 INFORMACIÓN DE LA CAPACITACIÓN</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Nombre del Curso</p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #0d47a1;">${nombreCapacitacion}</p>
+                        </div>
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Duración</p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #0d47a1;">${duracion}</p>
+                        </div>
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Instructor</p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #0d47a1;">${instructor}</p>
+                        </div>
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Fecha</p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #0d47a1;">${fechaCapacitacion}</p>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 14px; color: #fff; background: #0d47a1; padding: 12px 15px; margin: 0 0 15px 0; border-radius: 4px; font-weight: 700;">📖 CONTENIDOS</h2>
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 6px; margin-bottom: 30px;">
+                        <p style="margin: 0 0 15px 0; font-size: 12px; font-weight: 600; color: #0d47a1;">Temas:</p>
+                        <p style="margin: 0; font-size: 12px; color: #333; white-space: pre-wrap; line-height: 1.6;">${contenidos}</p>
+                    </div>
+
+                    <h2 style="font-size: 14px; color: #fff; background: #0d47a1; padding: 12px 15px; margin: 0 0 15px 0; border-radius: 4px; font-weight: 700;">💰 PAGO Y CONDICIONES</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Monto</p>
+                            <p style="margin: 8px 0 0 0; font-size: 18px; font-weight: 700; color: #0d47a1;">$${monto}</p>
+                        </div>
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600;">Método</p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #0d47a1;">${metodoPago}</p>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 14px; color: #fff; background: #0d47a1; padding: 12px 15px; margin: 0 0 15px 0; border-radius: 4px; font-weight: 700;">✍️ FIRMA DIGITAL</h2>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 6px; text-align: center; margin-bottom: 30px;">
+                        <img src="${signatureImage}" style="max-width: 100%; height: auto; border: 2px solid #0d47a1; padding: 10px; background: white; border-radius: 4px; margin: 10px 0;">
+                        <p style="margin: 15px 0 0 0; font-size: 11px; color: #666;">Firmado: ${fechaActual} ${horaActual}</p>
+                    </div>
+
+                    <div style="padding: 20px; background: #e3f2fd; border-radius: 6px; border-left: 4px solid #0d47a1;">
+                        <p style="margin: 0; font-size: 10px; color: #999;">Este documento ha sido generado electrónicamente con la firma digital del participante. ID: #${Date.now()}</p>
+                    </div>
+                </div>
             `;
 
-            return div;
-        }
+            // Configurar opciones del PDF
+            const opt = {
+                margin: 10,
+                filename: `Conformidad_${nombre.replace(/\s+/g, '_')}_${dui}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
 
-        function simulateSendEmail() {
-            const email = document.getElementById('emailParticipante').value;
-            const nombre = document.getElementById('nombreParticipante').value;
-            
-            console.log(`📧 Email enviado a: ${email}`);
-            console.log(`Destinatario: ${nombre}`);
-            console.log(`Asunto: Confirmación de Capacitación - Documento Firmado`);
-            
-            // Aquí en producción irías a un backend para enviar el email real
+            // Generar y descargar PDF
+            html2pdf().set(opt).from(pdfContent).save();
         }
     </script>
 </body>
