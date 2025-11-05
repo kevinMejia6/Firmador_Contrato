@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conformidad de Capacitación - Firma Digital</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -78,17 +79,6 @@
             border-radius: 5px;
             font-family: inherit;
             font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="date"]:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: #0066cc;
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
         }
 
         textarea {
@@ -102,10 +92,6 @@
             gap: 20px;
         }
 
-        .row.full {
-            grid-template-columns: 1fr;
-        }
-
         .canvas-container {
             border: 2px solid #0066cc;
             border-radius: 5px;
@@ -116,13 +102,9 @@
         canvas {
             display: block;
             cursor: crosshair;
-        }
-
-        .canvas-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
+            width: 100%;
+            height: 150px;
+            touch-action: none;
         }
 
         button {
@@ -138,6 +120,9 @@
         .btn-primary {
             background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
             color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
         }
 
         .btn-primary:hover {
@@ -202,10 +187,6 @@
             display: block;
         }
 
-        .success-message h3 {
-            margin-bottom: 10px;
-        }
-
         .loading {
             display: none;
             text-align: center;
@@ -230,24 +211,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        @media (max-width: 768px) {
-            .row {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 22px;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            canvas {
-                max-width: 100%;
-            }
-        }
     </style>
 </head>
 <body>
@@ -260,7 +223,7 @@
         <div class="content">
             <div class="success-message" id="successMessage">
                 <h3>✓ Documento firmado exitosamente</h3>
-                <p>Se ha descargado tu PDF y se envió confirmación a tu correo</p>
+                <p>Se ha descargado tu PDF con toda la información y tu firma digital</p>
             </div>
 
             <div class="loading" id="loading">
@@ -275,17 +238,17 @@
                     <div class="row">
                         <div class="form-group">
                             <label for="nombreParticipante">Nombre Completo *</label>
-                            <input type="text" id="nombreParticipante" required placeholder="Juan Pérez García">
+                            <input type="text" id="nombreParticipante" required>
                         </div>
                         <div class="form-group">
                             <label for="emailParticipante">Correo Electrónico *</label>
-                            <input type="email" id="emailParticipante" required placeholder="juan@example.com">
+                            <input type="email" id="emailParticipante" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group">
                             <label for="duiParticipante">DUI *</label>
-                            <input type="text" id="duiParticipante" required placeholder="12345678-9">
+                            <input type="text" id="duiParticipante" required>
                         </div>
                         <div class="form-group">
                             <label for="fechaParticipante">Fecha de Firma *</label>
@@ -300,7 +263,7 @@
                     <div class="row">
                         <div class="form-group">
                             <label for="nombreCapacitacion">Nombre del Curso/Capacitación *</label>
-                            <input type="text" id="nombreCapacitacion" required placeholder="Ej: Introducción a Excel">
+                            <input type="text" id="nombreCapacitacion" required>
                         </div>
                         <div class="form-group">
                             <label for="fechaCapacitacion">Fecha de Capacitación *</label>
@@ -309,11 +272,11 @@
                     </div>
                     <div class="form-group">
                         <label for="duracionCapacitacion">Duración (en horas) *</label>
-                        <input type="text" id="duracionCapacitacion" required placeholder="Ej: 8 horas">
+                        <input type="text" id="duracionCapacitacion" required>
                     </div>
                     <div class="form-group">
                         <label for="instructor">Instructor/a *</label>
-                        <input type="text" id="instructor" required placeholder="Nombre del instructor">
+                        <input type="text" id="instructor" required>
                     </div>
                 </div>
 
@@ -322,11 +285,11 @@
                     <h2>3. Contenidos Brindados</h2>
                     <div class="form-group">
                         <label for="contenidosCapacitacion">Detalle de Contenidos *</label>
-                        <textarea id="contenidosCapacitacion" required placeholder="Describe los temas, módulos y contenidos que se cubrieron en la capacitación..."></textarea>
+                        <textarea id="contenidosCapacitacion" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="objetivosCapacitacion">Objetivos de la Capacitación *</label>
-                        <textarea id="objetivosCapacitacion" required placeholder="¿Cuáles fueron los objetivos principales?"></textarea>
+                        <textarea id="objetivosCapacitacion" required></textarea>
                     </div>
                 </div>
 
@@ -336,7 +299,7 @@
                     <div class="row">
                         <div class="form-group">
                             <label for="montoCapacitacion">Monto Total ($) *</label>
-                            <input type="text" id="montoCapacitacion" required placeholder="0.00">
+                            <input type="text" id="montoCapacitacion" required>
                         </div>
                         <div class="form-group">
                             <label for="metodoPago">Método de Pago *</label>
@@ -352,11 +315,11 @@
                     </div>
                     <div class="form-group">
                         <label for="condicionesPago">Condiciones de Pago y Políticas de Reembolso *</label>
-                        <textarea id="condicionesPago" required placeholder="Detalla las condiciones de pago, políticas de cancelación, reembolsos, etc..."></textarea>
+                        <textarea id="condicionesPago" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="materialesIncluidos">Materiales Incluidos *</label>
-                        <textarea id="materialesIncluidos" required placeholder="Describe qué materiales, certificados o recursos se incluyen..."></textarea>
+                        <textarea id="materialesIncluidos" required></textarea>
                     </div>
                 </div>
 
@@ -365,50 +328,50 @@
                     <h2>5. Aceptación y Términos</h2>
                     <div class="form-group">
                         <label for="terminosCondiciones">Términos y Condiciones Generales *</label>
-                        <textarea id="terminosCondiciones" required placeholder="Especifica los términos generales, normas de conducta, política de privacidad..."></textarea>
+                        <textarea id="terminosCondiciones" required></textarea>
                     </div>
                     
                     <div class="checkbox-group">
                         <input type="checkbox" id="acepta1" required>
-                        <label for="acepta1" style="margin: 0;">He revisado y entiendo los contenidos de la capacitación</label>
+                        <label for="acepta1" style="margin: 0;">He revisado y entiendo los contenidos</label>
                     </div>
                     
                     <div class="checkbox-group">
                         <input type="checkbox" id="acepta2" required>
-                        <label for="acepta2" style="margin: 0;">Confirmo que me han explicado las condiciones de pago</label>
+                        <label for="acepta2" style="margin: 0;">Confirmo las condiciones de pago</label>
                     </div>
                     
                     <div class="checkbox-group">
                         <input type="checkbox" id="acepta3" required>
-                        <label for="acepta3" style="margin: 0;">Acepto los términos y condiciones de esta capacitación</label>
+                        <label for="acepta3" style="margin: 0;">Acepto los términos y condiciones</label>
                     </div>
                     
                     <div class="checkbox-group">
                         <input type="checkbox" id="acepta4" required>
-                        <label for="acepta4" style="margin: 0;">Autorizo el envío de confirmación a mi correo electrónico</label>
+                        <label for="acepta4" style="margin: 0;">Autorizo el envío de confirmación</label>
                     </div>
                 </div>
 
                 <!-- FIRMA DIGITAL -->
                 <div class="form-section">
                     <h2>6. Firma Digital</h2>
-                    <p style="margin-bottom: 15px; color: #666;">Por favor, firma en el espacio inferior. Usa tu mouse o dedo en dispositivos táctiles.</p>
+                    <p style="margin-bottom: 15px; color: #666;">Por favor, firma en el espacio inferior.</p>
                     
                     <div class="canvas-container">
-                        <canvas id="signatureCanvas" width="800" height="150"></canvas>
+                        <canvas id="signatureCanvas"></canvas>
                     </div>
                     <div id="signatureStatus" class="signature-status status-pending">
                         ✏️ Esperando firma...
                     </div>
-                    <div class="canvas-buttons">
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
                         <button type="button" class="btn-secondary" onclick="clearSignature()">🔄 Limpiar Firma</button>
                     </div>
                 </div>
 
                 <!-- BOTONES FINALES -->
                 <div class="form-section">
-                    <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 16px;">
-                        ✓ Firmar y Descargar PDF
+                    <button type="submit" class="btn-primary">
+                        ✓ Firmar y Descargar PDF Completo
                     </button>
                 </div>
             </form>
@@ -416,24 +379,31 @@
     </div>
 
     <script>
-        // Setup canvas
         const canvas = document.getElementById('signatureCanvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         let isDrawing = false;
         let hasSignature = false;
 
-        // Mouse events
+        // Configurar canvas
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width - 4;
+            canvas.height = 150;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Eventos
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-
-        // Touch events
-        canvas.addEventListener('touchstart', handleTouch);
-        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchstart', handleTouch, false);
+        canvas.addEventListener('touchmove', handleTouch, false);
         canvas.addEventListener('touchend', stopDrawing);
 
         function startDrawing(e) {
+            if (e.button !== 0) return;
             isDrawing = true;
             hasSignature = true;
             const rect = canvas.getBoundingClientRect();
@@ -441,7 +411,7 @@
             const y = (e.clientY - rect.top) * (canvas.height / rect.height);
             ctx.beginPath();
             ctx.moveTo(x, y);
-            updateSignatureStatus();
+            updateStatus();
         }
 
         function draw(e) {
@@ -471,7 +441,7 @@
             if (e.type === 'touchstart') {
                 ctx.beginPath();
                 ctx.moveTo(x, y);
-            } else if (e.type === 'touchmove' && isDrawing) {
+            } else if (e.type === 'touchmove') {
                 ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
@@ -479,64 +449,59 @@
                 ctx.lineTo(x, y);
                 ctx.stroke();
             }
+            updateStatus();
         }
 
         function stopDrawing() {
             isDrawing = false;
         }
 
-        function updateSignatureStatus() {
+        function updateStatus() {
             const status = document.getElementById('signatureStatus');
             if (hasSignature) {
                 status.classList.remove('status-pending');
                 status.classList.add('status-completed');
                 status.innerHTML = '✓ Firma completada';
-            } else {
-                status.classList.remove('status-completed');
-                status.classList.add('status-pending');
-                status.innerHTML = '✏️ Esperando firma...';
             }
         }
 
         function clearSignature() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hasSignature = false;
-            updateSignatureStatus();
+            const status = document.getElementById('signatureStatus');
+            status.classList.add('status-pending');
+            status.classList.remove('status-completed');
+            status.innerHTML = '✏️ Esperando firma...';
         }
 
-        // Setear la fecha actual
         document.getElementById('fechaParticipante').valueAsDate = new Date();
 
-        // Submit form
         document.getElementById('conformityForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             if (!hasSignature) {
-                alert('Por favor, firma el documento antes de enviar');
+                alert('Por favor, firma el documento');
                 return;
             }
 
-            // Mostrar loading
             document.getElementById('loading').classList.add('show');
 
-            // Generar PDF
             setTimeout(() => {
                 generatePDF();
-                
-                // Mostrar mensaje de éxito
                 document.getElementById('loading').classList.remove('show');
                 document.getElementById('successMessage').classList.add('show');
 
-                // Reset form después de 3 segundos
                 setTimeout(() => {
                     document.getElementById('conformityForm').reset();
                     clearSignature();
                     document.getElementById('successMessage').classList.remove('show');
                 }, 3000);
-            }, 1500);
+            }, 800);
         });
 
         function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            
             const nombre = document.getElementById('nombreParticipante').value;
             const dui = document.getElementById('duiParticipante').value;
             const email = document.getElementById('emailParticipante').value;
@@ -551,75 +516,216 @@
             const condicionesPago = document.getElementById('condicionesPago').value;
             const materialesIncluidos = document.getElementById('materialesIncluidos').value;
             const terminosCondiciones = document.getElementById('terminosCondiciones').value;
+            
             const fechaActual = new Date().toLocaleDateString('es-ES');
             const horaActual = new Date().toLocaleTimeString('es-ES');
-            const canvas = document.getElementById('signatureCanvas');
             const signatureImage = canvas.toDataURL('image/png');
 
-            // Crear elemento HTML para PDF
-            const element = document.createElement('div');
-            element.style.padding = '40px';
-            element.style.fontFamily = 'Arial, sans-serif';
-            element.style.backgroundColor = '#fff';
-            element.style.color = '#333';
+            const doc = new jsPDF({
+                orientation: 'p',
+                unit: 'mm',
+                format: 'a4',
+                compress: true,
+                precision: 16,
+                userUnit: 1.0
+            });
 
-            element.innerHTML = `
-                <div style="text-align: center; padding: 15px 20px; background: #0d47a1; color: white;">
-                    <h1 style="margin: 0; font-size: 22px;">DOCUMENTO DE CONFORMIDAD</h1>
-                    <p style="margin: 3px 0 0 0; font-size: 11px;">Capacitación Profesional</p>
-                </div>
+            // Usar fuente Helvetica que soporta bien caracteres latinos
+            doc.setFont('helvetica', 'normal');
+            
+            let y = 15;
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 12;
 
-                <div style="text-align: center; padding: 8px 20px; background: #f0f4f8; border-bottom: 2px solid #0d47a1;">
-                    <p style="margin: 0; font-size: 11px; font-weight: 600; color: #0d47a1;">COPIA PARA EL EMPLEADO</p>
-                </div>
+            function newPage() {
+                doc.addPage();
+                y = 15;
+            }
 
-                <div style="padding: 15px 20px;">
-                    <p><strong>Fecha:</strong> ${fechaActual} | <strong>Hora:</strong> ${horaActual} | <strong>ID:</strong> #${Date.now().toString().slice(-8)}</p>
+            function checkSpace(height = 10) {
+                if (y + height > pageHeight - 10) {
+                    newPage();
+                }
+            }
 
-                    <h3 style="background: #0d47a1; color: white; padding: 8px; margin: 15px 0 10px 0; font-size: 11px;">DATOS DEL PARTICIPANTE</h3>
-                    <p><strong>Nombre:</strong> ${nombre}</p>
-                    <p><strong>DUI:</strong> ${dui}</p>
-                    <p><strong>Email:</strong> ${email}</p>
+            // Header
+            doc.setFillColor(13, 71, 161);
+            doc.rect(0, 0, pageWidth, 20, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DOCUMENTO DE CONFORMIDAD', pageWidth / 2, 8, { align: 'center' });
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Capacitación y Formación Profesional', pageWidth / 2, 14, { align: 'center' });
+            
+            y = 25;
 
-                    <h3 style="background: #0d47a1; color: white; padding: 8px; margin: 15px 0 10px 0; font-size: 11px;">INFORMACIÓN DE LA CAPACITACIÓN</h3>
-                    <p><strong>Curso:</strong> ${nombreCapacitacion}</p>
-                    <p><strong>Duración:</strong> ${duracion}</p>
-                    <p><strong>Instructor:</strong> ${instructor}</p>
-                    <p><strong>Fecha:</strong> ${fechaCapacitacion}</p>
+            // Copia para empleado
+            doc.setFillColor(240, 244, 248);
+            doc.rect(0, y - 3, pageWidth, 8, 'F');
+            doc.setTextColor(13, 71, 161);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'bold');
+            doc.text('COPIA PARA EL EMPLEADO', pageWidth / 2, y + 1, { align: 'center' });
+            doc.setFont('helvetica', 'normal');
+            y += 12;
 
-                    <h3 style="background: #0d47a1; color: white; padding: 8px; margin: 15px 0 10px 0; font-size: 11px;">CONTENIDOS BRINDADOS</h3>
-                    <p style="font-size: 10px;">${contenidos.substring(0, 200)}...</p>
+            // Info
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(8);
+            doc.text(`Fecha: ${fechaActual}  |  Hora: ${horaActual}  |  ID: #${Date.now().toString().slice(-8)}`, margin, y);
+            y += 8;
 
-                    <h3 style="background: #0d47a1; color: white; padding: 8px; margin: 15px 0 10px 0; font-size: 11px;">CONDICIONES DE PAGO</h3>
-                    <p><strong>Monto:</strong> $${monto}</p>
-                    <p><strong>Método:</strong> ${metodoPago}</p>
+            // PARTICIPANTE
+            checkSpace();
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DATOS DEL PARTICIPANTE', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(9);
+            doc.text(`Nombre: ${nombre}`, margin, y);
+            y += 5;
+            doc.text(`DUI: ${dui}`, margin, y);
+            y += 5;
+            doc.text(`Email: ${email}`, margin, y);
+            y += 8;
 
-                    <h3 style="background: #0d47a1; color: white; padding: 8px; margin: 15px 0 10px 0; font-size: 11px;">CONFORMIDAD</h3>
-                    <p style="font-size: 10px; background: #d4edda; padding: 10px; border-radius: 4px;">
-                        ✓ Ha revisado y entendido los contenidos<br>
-                        ✓ Comprende las condiciones de pago<br>
-                        ✓ Acepta los términos y condiciones
-                    </p>
+            // CAPACITACIÓN
+            checkSpace();
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('INFORMACION DE LA CAPACITACION', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
 
-                    <h3 style="background: #0d47a1; color: white; padding: 8px; margin: 15px 0 10px 0; font-size: 11px;">FIRMA DIGITAL</h3>
-                    <div style="text-align: center; padding: 10px; border: 2px solid #0d47a1; margin: 10px 0; background: #f8f9fa;">
-                        <img src="${signatureImage}" style="max-width: 100%; height: auto; max-height: 70px;">
-                    </div>
-                    <p style="font-size: 9px; color: #666; text-align: center;">Firmado: ${fechaActual} ${horaActual}</p>
-                </div>
-            `;
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(9);
+            doc.text(`Curso: ${nombreCapacitacion}`, margin, y);
+            y += 5;
+            doc.text(`Duracion: ${duracion}`, margin, y);
+            y += 5;
+            doc.text(`Instructor: ${instructor}`, margin, y);
+            y += 5;
+            doc.text(`Fecha: ${fechaCapacitacion}`, margin, y);
+            y += 8;
 
-            // Configurar opciones del PDF
-            const opt = {
-                margin: [5, 5, 5, 5],
-                filename: `Conformidad_${nombre.replace(/\s+/g, '_')}_${dui}_${new Date().toISOString().split('T')[0]}.pdf`,
-                image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 1.5, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#fff' },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true }
-            };
+            // CONTENIDOS
+            checkSpace();
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CONTENIDOS BRINDADOS', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
 
-            // Generar y descargar PDF
-            html2pdf().set(opt).from(element).save();
+            doc.setFontSize(8);
+            doc.setTextColor(0, 0, 0);
+            const contenidosLines = doc.splitTextToSize(`Temas: ${contenidos}`, pageWidth - 2 * margin);
+            doc.text(contenidosLines, margin, y);
+            y += contenidosLines.length * 3.5 + 4;
+
+            checkSpace();
+            const objetivosLines = doc.splitTextToSize(`Objetivos: ${objetivos}`, pageWidth - 2 * margin);
+            doc.text(objetivosLines, margin, y);
+            y += objetivosLines.length * 3.5 + 8;
+
+            // PAGO
+            checkSpace();
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CONDICIONES DE PAGO', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
+
+            doc.setFontSize(8);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Monto: $${monto}  |  Metodo: ${metodoPago}`, margin, y);
+            y += 5;
+
+            const condicionesLines = doc.splitTextToSize(`Condiciones: ${condicionesPago}`, pageWidth - 2 * margin);
+            doc.text(condicionesLines, margin, y);
+            y += condicionesLines.length * 3.5 + 4;
+
+            checkSpace();
+            const materialesLines = doc.splitTextToSize(`Materiales: ${materialesIncluidos}`, pageWidth - 2 * margin);
+            doc.text(materialesLines, margin, y);
+            y += materialesLines.length * 3.5 + 8;
+
+            // TÉRMINOS
+            checkSpace();
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('TERMINOS Y CONDICIONES', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
+
+            doc.setFontSize(8);
+            doc.setTextColor(0, 0, 0);
+            const terminosLines = doc.splitTextToSize(terminosCondiciones, pageWidth - 2 * margin);
+            doc.text(terminosLines, margin, y);
+            y += terminosLines.length * 3.5 + 8;
+
+            // CONFORMIDAD
+            checkSpace(20);
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CONFORMIDAD Y ACEPTACION', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
+
+            doc.setFillColor(212, 237, 218);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 18, 'F');
+            doc.setTextColor(21, 87, 36);
+            doc.setFontSize(8);
+            doc.text('El participante CONFIRMA Y ACEPTA:', margin, y);
+            doc.text('- He revisado y entendido los contenidos de la capacitacion', margin + 2, y + 4);
+            doc.text('- Comprendo las condiciones de pago', margin + 2, y + 7);
+            doc.text('- Acepto los terminos y condiciones', margin + 2, y + 10);
+            doc.text('- Autorizo el envio de confirmaciones', margin + 2, y + 13);
+            y += 22;
+
+            // FIRMA
+            checkSpace(50);
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('FIRMA DIGITAL', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 10;
+
+            doc.addImage(signatureImage, 'PNG', margin, y, pageWidth - 2 * margin, 35);
+            y += 40;
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(9);
+            doc.text(`${nombre} | DUI: ${dui} | ${fechaActual}`, pageWidth / 2, y, { align: 'center' });
+
+            const filename = `Conformidad_${nombre.replace(/\s+/g, '_')}_${dui}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(filename);
         }
     </script>
 </body>
