@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conformidad de Capacitación - Firma Digital</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0ea5e9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .canvas-container {
+            border: 2px solid #0ea5e9;
+            border-radius: 5px;
+            margin: 15px 0;
+            background: #f9f9f9;
+        }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+
+        .canvas-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .signature-status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .document-preview {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .preview-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .preview-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .preview-section:last-child {
+            border-bottom: none;
+        }
+
+        .preview-label {
+            font-weight: 600;
+            color: #0ea5e9;
+            margin-bottom: 5px;
+        }
+
+        .preview-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-message h3 {
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0ea5e9;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            canvas {
+                max-width: 100%;
+            }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            color: #0ea5e9;
+            border-bottom-color: #0ea5e9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Conformidad de Capacitación</h1>
+            <p>Firma digital del documento de capacitación</p>
+        </div>
+
+        <div class="content">
+            <div class="success-message" id="successMessage">
+                <h3>✓ Documento firmado exitosamente</h3>
+                <p>Se ha enviado una copia a tu correo electrónico</p>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Procesando tu firma...</p>
+            </div>
+
+            <form id="conformityForm">
+                <!-- DATOS DEL PARTICIPANTE -->
+                <div class="form-section">
+                    <h2>1. Datos del Participante</h2>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="nombreParticipante">Nombre Completo *</label>
+                            <input type="text" id="nombreParticipante" required placeholder="Juan Pérez García">
+                        </div>
+                        <div class="form-group">
+                            <label for="emailParticipante">Correo Electrónico *</label>
+                            <input type="email" id="emailParticipante" required placeholder="juan@example.com">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="cedulaParticipante">Cédula/Documento de Identidad *</label>
+                            <input type="text" id="cedulaParticipante" required placeholder="12345678">
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaParticipante">Fecha de Firma *</label>
+                            <input type="date" id="fechaParticipante" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFORMACIÓN DE LA CAPACITACIÓN -->
+                <div class="form-section">
+                    <h2>2. Información de la Capacitación</h2>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="nombreCapacitacion">Nombre del Curso/Capacitación *</label>
+                            <input type="text" id="nombreCapacitacion" required placeholder="Ej: Introducción a Excel">
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaCapacitacion">Fecha de Capacitación *</label>
+                            <input type="date" id="fechaCapacitacion" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="duracionCapacitacion">Duración (en horas) *</label>
+                        <input type="text" id="duracionCapacitacion" required placeholder="Ej: 8 horas">
+                    </div>
+                    <div class="form-group">
+                        <label for="instructor">Instructor/a *</label>
+                        <input type="text" id="instructor" required placeholder="Nombre del instructor">
+                    </div>
+                </div>
+
+                <!-- CONTENIDOS BRINDADOS -->
+                <div class="form-section">
+                    <h2>3. Contenidos Brindados</h2>
+                    <div class="form-group">
+                        <label for="contenidosCapacitacion">Detalle de Contenidos *</label>
+                        <textarea id="contenidosCapacitacion" required placeholder="Describe los temas, módulos y contenidos que se cubrieron en la capacitación..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="objetivosCapacitacion">Objetivos de la Capacitación *</label>
+                        <textarea id="objetivosCapacitacion" required placeholder="¿Cuáles fueron los objetivos principales?"></textarea>
+                    </div>
+                </div>
+
+                <!-- CONDICIONES DE PAGO Y ACCESO -->
+                <div class="form-section">
+                    <h2>4. Condiciones de Pago y Acceso</h2>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="montoCapacitacion">Monto Total ($) *</label>
+                            <input type="text" id="montoCapacitacion" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="metodoPago">Método de Pago *</label>
+                            <select id="metodoPago" required>
+                                <option value="">Selecciona un método</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="condicionesPago">Condiciones de Pago y Políticas de Reembolso *</label>
+                        <textarea id="condicionesPago" required placeholder="Detalla las condiciones de pago, políticas de cancelación, reembolsos, etc..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="materialesIncluidos">Materiales Incluidos *</label>
+                        <textarea id="materialesIncluidos" required placeholder="Describe qué materiales, certificados o recursos se incluyen..."></textarea>
+                    </div>
+                </div>
+
+                <!-- TÉRMINOS Y CONDICIONES -->
+                <div class="form-section">
+                    <h2>5. Aceptación y Términos</h2>
+                    <div class="form-group">
+                        <label for="terminosCondiciones">Términos y Condiciones Generales *</label>
+                        <textarea id="terminosCondiciones" required placeholder="Especifica los términos generales, normas de conducta, política de privacidad..."></textarea>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="acepta1" required>
+                        <label for="acepta1" style="margin: 0;">He revisado y entiendo los contenidos de la capacitación</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="acepta2" required>
+                        <label for="acepta2" style="margin: 0;">Confirmo que me han explicado las condiciones de pago</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="acepta3" required>
+                        <label for="acepta3" style="margin: 0;">Acepto los términos y condiciones de esta capacitación</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="acepta4" required>
+                        <label for="acepta4" style="margin: 0;">Autorizo el envío de confirmación a mi correo electrónico</label>
+                    </div>
+                </div>
+
+                <!-- FIRMA DIGITAL -->
+                <div class="form-section">
+                    <h2>6. Firma Digital</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Por favor, firma en el espacio inferior. Usa tu mouse o dedo en dispositivos táctiles.</p>
+                    
+                    <div class="canvas-container">
+                        <canvas id="signatureCanvas" width="800" height="150"></canvas>
+                    </div>
+                    <div id="signatureStatus" class="signature-status status-pending">
+                        ✏️ Esperando firma...
+                    </div>
+                    <div class="canvas-buttons">
+                        <button type="button" class="btn-secondary" onclick="clearSignature()">🔄 Limpiar Firma</button>
+                        <button type="button" class="btn-secondary" onclick="previewDocument()">👁️ Vista Previa</button>
+                    </div>
+                </div>
+
+                <!-- VISTA PREVIA -->
+                <div id="documentPreview" class="document-preview" style="display: none;">
+                    <div class="preview-title">DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</div>
+                    <div class="preview-section">
+                        <div class="preview-label">Participante:</div>
+                        <div class="preview-content" id="preview-nombre"></div>
+                    </div>
+                    <div class="preview-section">
+                        <div class="preview-label">Capacitación:</div>
+                        <div class="preview-content" id="preview-capacitacion"></div>
+                    </div>
+                    <div class="preview-section">
+                        <div class="preview-label">Contenidos:</div>
+                        <div class="preview-content" id="preview-contenidos"></div>
+                    </div>
+                    <div class="preview-section">
+                        <div class="preview-label">Monto e Método de Pago:</div>
+                        <div class="preview-content" id="preview-pago"></div>
+                    </div>
+                </div>
+
+                <!-- BOTONES FINALES -->
+                <div class="form-section">
+                    <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 16px;">
+                        ✓ Firmar y Enviar Conformidad
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Setup canvas
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let hasSignature = false;
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            hasSignature = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#333';
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            updateSignatureStatus();
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            if (e.type === 'touchstart') {
+                isDrawing = true;
+                hasSignature = true;
+            }
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+            
+            if (e.type === 'touchstart') {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            } else if (e.type === 'touchmove' && isDrawing) {
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#333';
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+            updateSignatureStatus();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function updateSignatureStatus() {
+            const status = document.getElementById('signatureStatus');
+            if (hasSignature) {
+                status.classList.remove('status-pending');
+                status.classList.add('status-completed');
+                status.innerHTML = '✓ Firma completada';
+            } else {
+                status.classList.remove('status-completed');
+                status.classList.add('status-pending');
+                status.innerHTML = '✏️ Esperando firma...';
+            }
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+            updateSignatureStatus();
+        }
+
+        function previewDocument() {
+            const preview = document.getElementById('documentPreview');
+            
+            document.getElementById('preview-nombre').textContent = 
+                `${document.getElementById('nombreParticipante').value} - ${document.getElementById('cedulaParticipante').value}`;
+            
+            document.getElementById('preview-capacitacion').textContent = 
+                `${document.getElementById('nombreCapacitacion').value} (${document.getElementById('duracionCapacitacion').value}) - ${document.getElementById('fechaCapacitacion').value}`;
+            
+            document.getElementById('preview-contenidos').textContent = 
+                document.getElementById('contenidosCapacitacion').value;
+            
+            document.getElementById('preview-pago').textContent = 
+                `$${document.getElementById('montoCapacitacion').value} - ${document.getElementById('metodoPago').value}`;
+            
+            preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
+            preview.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Setear la fecha actual
+        document.getElementById('fechaParticipante').valueAsDate = new Date();
+
+        // Submit form
+        document.getElementById('conformityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!hasSignature) {
+                alert('Por favor, firma el documento antes de enviar');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loading').classList.add('show');
+
+            // Simular procesamiento (en producción, aquí irías a un servidor)
+            setTimeout(() => {
+                // Generar PDF
+                generatePDF();
+
+                // Mostrar mensaje de éxito
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('successMessage').classList.add('show');
+
+                // Simular envío de email
+                simulateSendEmail();
+
+                // Reset form
+                setTimeout(() => {
+                    document.getElementById('conformityForm').reset();
+                    clearSignature();
+                    document.getElementById('successMessage').classList.remove('show');
+                }, 3000);
+            }, 1500);
+        });
+
+        function generatePDF() {
+            const element = createPDFContent();
+            const opt = {
+                margin: 10,
+                filename: `Conformidad_${document.getElementById('nombreParticipante').value}_${new Date().getTime()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+            html2pdf().set(opt).save(element);
+        }
+
+        function createPDFContent() {
+            const div = document.createElement('div');
+            div.style.padding = '20px';
+            div.style.fontFamily = 'Arial, sans-serif';
+            div.style.fontSize = '12px';
+            div.style.color = '#333';
+
+            const nombre = document.getElementById('nombreParticipante').value;
+            const cedula = document.getElementById('cedulaParticipante').value;
+            const nombreCapacitacion = document.getElementById('nombreCapacitacion').value;
+            const duracion = document.getElementById('duracionCapacitacion').value;
+            const instructor = document.getElementById('instructor').value;
+            const contenidos = document.getElementById('contenidosCapacitacion').value;
+            const monto = document.getElementById('montoCapacitacion').value;
+            const metodoPago = document.getElementById('metodoPago').value;
+            const condicionesPago = document.getElementById('condicionesPago').value;
+
+            div.innerHTML = `
+                <h1 style="text-align: center; font-size: 18px; margin-bottom: 30px;">DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
+                
+                <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">1. DATOS DEL PARTICIPANTE</h2>
+                <p><strong>Nombre:</strong> ${nombre}</p>
+                <p><strong>Cédula/Documento:</strong> ${cedula}</p>
+                <p><strong>Email:</strong> ${document.getElementById('emailParticipante').value}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">2. INFORMACIÓN DE LA CAPACITACIÓN</h2>
+                <p><strong>Nombre del Curso:</strong> ${nombreCapacitacion}</p>
+                <p><strong>Duración:</strong> ${duracion}</p>
+                <p><strong>Instructor:</strong> ${instructor}</p>
+                <p><strong>Fecha:</strong> ${document.getElementById('fechaCapacitacion').value}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">3. CONTENIDOS BRINDADOS</h2>
+                <p>${contenidos}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">4. CONDICIONES DE PAGO</h2>
+                <p><strong>Monto Total:</strong> $${monto}</p>
+                <p><strong>Método de Pago:</strong> ${metodoPago}</p>
+                <p><strong>Términos:</strong> ${condicionesPago}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">5. ACEPTACIÓN</h2>
+                <p>El suscrito confirma que:</p>
+                <ul>
+                    <li>Ha revisado y entendido los contenidos de la capacitación</li>
+                    <li>Comprende las condiciones de pago</li>
+                    <li>Acepta los términos y condiciones</li>
+                    <li>Autoriza el envío de esta confirmación</li>
+                </ul>
+                
+                <p style="margin-top: 40px;"><strong>Firma Digital:</strong> ___________________</p>
+                <p><strong>Nombre:</strong> ${nombre}</p>
+                <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+            `;
+
+            return div;
+        }
+
+        function simulateSendEmail() {
+            const email = document.getElementById('emailParticipante').value;
+            const nombre = document.getElementById('nombreParticipante').value;
+            
+            console.log(`📧 Email enviado a: ${email}`);
+            console.log(`Destinatario: ${nombre}`);
+            console.log(`Asunto: Confirmación de Capacitación - Documento Firmado`);
+            
+            // Aquí en producción irías a un backend para enviar el email real
+        }
+    </script>
+</body>
+</html>
