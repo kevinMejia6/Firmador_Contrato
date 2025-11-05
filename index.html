@@ -353,8 +353,8 @@
                     </div>
                     <div class="row">
                         <div class="form-group">
-                            <label for="cedulaParticipante">Cédula/Documento de Identidad *</label>
-                            <input type="text" id="cedulaParticipante" required placeholder="12345678">
+                            <label for="duiParticipante">DUI *</label>
+                            <input type="text" id="duiParticipante" required placeholder="12345678-9">
                         </div>
                         <div class="form-group">
                             <label for="fechaParticipante">Fecha de Firma *</label>
@@ -600,7 +600,7 @@
             const preview = document.getElementById('documentPreview');
             
             document.getElementById('preview-nombre').textContent = 
-                `${document.getElementById('nombreParticipante').value} - ${document.getElementById('cedulaParticipante').value}`;
+                `${document.getElementById('nombreParticipante').value} - DUI: ${document.getElementById('duiParticipante').value}`;
             
             document.getElementById('preview-capacitacion').textContent = 
                 `${document.getElementById('nombreCapacitacion').value} (${document.getElementById('duracionCapacitacion').value}) - ${document.getElementById('fechaCapacitacion').value}`;
@@ -652,14 +652,21 @@
         });
 
         function generatePDF() {
+            const nombre = document.getElementById('nombreParticipante').value;
+            const dui = document.getElementById('duiParticipante').value;
             const element = createPDFContent();
+            
+            // Nombre del archivo con datos del empleado
+            const nombreArchivo = `Conformidad_Capacitacion_${nombre.replace(/\s+/g, '_')}_${dui}_${new Date().toISOString().split('T')[0]}.pdf`;
+            
             const opt = {
                 margin: 10,
-                filename: `Conformidad_${document.getElementById('nombreParticipante').value}_${new Date().getTime()}.pdf`,
+                filename: nombreArchivo,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
                 jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
             };
+            
             html2pdf().set(opt).save(element);
         }
 
@@ -671,51 +678,84 @@
             div.style.color = '#333';
 
             const nombre = document.getElementById('nombreParticipante').value;
-            const cedula = document.getElementById('cedulaParticipante').value;
+            const dui = document.getElementById('duiParticipante').value;
             const nombreCapacitacion = document.getElementById('nombreCapacitacion').value;
             const duracion = document.getElementById('duracionCapacitacion').value;
             const instructor = document.getElementById('instructor').value;
             const contenidos = document.getElementById('contenidosCapacitacion').value;
+            const objetivos = document.getElementById('objetivosCapacitacion').value;
             const monto = document.getElementById('montoCapacitacion').value;
             const metodoPago = document.getElementById('metodoPago').value;
             const condicionesPago = document.getElementById('condicionesPago').value;
+            const materialesIncluidos = document.getElementById('materialesIncluidos').value;
+            const terminosCondiciones = document.getElementById('terminosCondiciones').value;
+
+            // Obtener la firma como imagen
+            const canvas = document.getElementById('signatureCanvas');
+            const signatureImage = canvas.toDataURL('image/png');
 
             div.innerHTML = `
-                <h1 style="text-align: center; font-size: 18px; margin-bottom: 30px;">DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
+                <h1 style="text-align: center; font-size: 18px; margin-bottom: 10px; color: #001f3f;">DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
+                <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 11px;">COPIA PARA EL EMPLEADO</p>
                 
-                <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+                <p style="margin-bottom: 20px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+                <p style="margin-bottom: 20px;"><strong>Fecha de Firma:</strong> ${document.getElementById('fechaParticipante').value}</p>
                 
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">1. DATOS DEL PARTICIPANTE</h2>
-                <p><strong>Nombre:</strong> ${nombre}</p>
-                <p><strong>Cédula/Documento:</strong> ${cedula}</p>
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">1. DATOS DEL PARTICIPANTE</h2>
+                <p><strong>Nombre Completo:</strong> ${nombre}</p>
+                <p><strong>DUI:</strong> ${dui}</p>
                 <p><strong>Email:</strong> ${document.getElementById('emailParticipante').value}</p>
                 
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">2. INFORMACIÓN DE LA CAPACITACIÓN</h2>
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">2. INFORMACIÓN DE LA CAPACITACIÓN</h2>
                 <p><strong>Nombre del Curso:</strong> ${nombreCapacitacion}</p>
                 <p><strong>Duración:</strong> ${duracion}</p>
-                <p><strong>Instructor:</strong> ${instructor}</p>
-                <p><strong>Fecha:</strong> ${document.getElementById('fechaCapacitacion').value}</p>
+                <p><strong>Instructor/a:</strong> ${instructor}</p>
+                <p><strong>Fecha de Capacitación:</strong> ${document.getElementById('fechaCapacitacion').value}</p>
                 
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">3. CONTENIDOS BRINDADOS</h2>
-                <p>${contenidos}</p>
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">3. CONTENIDOS BRINDADOS</h2>
+                <p><strong>Temas y Módulos:</strong></p>
+                <p style="line-height: 1.6; white-space: pre-wrap;">${contenidos}</p>
                 
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">4. CONDICIONES DE PAGO</h2>
+                <p style="margin-top: 15px;"><strong>Objetivos de la Capacitación:</strong></p>
+                <p style="line-height: 1.6; white-space: pre-wrap;">${objetivos}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">4. CONDICIONES DE PAGO Y ACCESO</h2>
                 <p><strong>Monto Total:</strong> $${monto}</p>
                 <p><strong>Método de Pago:</strong> ${metodoPago}</p>
-                <p><strong>Términos:</strong> ${condicionesPago}</p>
+                <p><strong>Condiciones de Pago y Políticas:</strong></p>
+                <p style="line-height: 1.6; white-space: pre-wrap;">${condicionesPago}</p>
                 
-                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">5. ACEPTACIÓN</h2>
-                <p>El suscrito confirma que:</p>
-                <ul>
-                    <li>Ha revisado y entendido los contenidos de la capacitación</li>
-                    <li>Comprende las condiciones de pago</li>
-                    <li>Acepta los términos y condiciones</li>
-                    <li>Autoriza el envío de esta confirmación</li>
+                <p style="margin-top: 15px;"><strong>Materiales Incluidos:</strong></p>
+                <p style="line-height: 1.6; white-space: pre-wrap;">${materialesIncluidos}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">5. TÉRMINOS Y CONDICIONES</h2>
+                <p style="line-height: 1.6; white-space: pre-wrap; margin-bottom: 20px;">${terminosCondiciones}</p>
+                
+                <h2 style="font-size: 14px; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #001f3f; padding-bottom: 5px; color: #001f3f;">6. ACEPTACIÓN Y FIRMA</h2>
+                <p>El suscrito confirma haber leído, entendido y aceptado:</p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Los contenidos y objetivos de la capacitación</li>
+                    <li>Las condiciones de pago establecidas</li>
+                    <li>Los términos y condiciones generales</li>
+                    <li>Que recibe una copia de este documento</li>
                 </ul>
                 
-                <p style="margin-top: 40px;"><strong>Firma Digital:</strong> ___________________</p>
-                <p><strong>Nombre:</strong> ${nombre}</p>
-                <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+                <div style="margin-top: 40px; border-top: 2px solid #ddd; padding-top: 20px;">
+                    <p style="margin-bottom: 10px;"><strong>Firma Digital del Participante:</strong></p>
+                    <img src="${signatureImage}" style="max-width: 400px; height: auto; border: 1px solid #ddd; padding: 5px; margin: 10px 0;">
+                </div>
+                
+                <div style="margin-top: 30px; background: #f0f0f0; padding: 15px; border-left: 4px solid #001f3f; border-radius: 3px;">
+                    <p style="margin: 0; font-size: 11px; color: #666;">
+                        <strong>AVISO IMPORTANTE:</strong> Este documento ha sido generado digitalmente y incluye la firma digital del participante. 
+                        La copia original se mantiene en los registros de la institución. Esta es una copia para su archivo personal.
+                    </p>
+                </div>
+                
+                <p style="margin-top: 30px; text-align: center; font-size: 10px; color: #999;">
+                    Documento generado: ${new Date().toLocaleString('es-ES')}<br>
+                    ID de Transacción: ${Date.now()}
+                </p>
             `;
 
             return div;
