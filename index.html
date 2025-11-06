@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conformidad de Capacitación - Firma Digital</title>
+    <title>Conformidad de Capacitación - COMO</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,13 +14,13 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
             border-radius: 10px;
@@ -34,45 +33,77 @@
             color: white;
             padding: 40px 20px;
             text-align: center;
+            position: relative;
         }
+
+        .logo-header {
+            position: absolute;
+            left: 20px;
+            top: 10px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .logo-box {
+            width: 35px;
+            height: 35px;
+            font-weight: bold;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .logo-c { background: white; color: #0d47a1; }
+        .logo-o { background: white; color: black; }
+        .logo-m { background: white; color: black; }
+        .logo-o2 { background: #0d47a1; color: white; }
 
         .header h1 {
             font-size: 28px;
             margin-bottom: 10px;
         }
 
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
         .content {
             padding: 40px;
         }
 
-        .form-section {
-            margin-bottom: 30px;
+        .section {
+            margin-bottom: 40px;
         }
 
-        .form-section h2 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 15px;
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #0066cc;
+            border-bottom: 2px solid #0d47a1;
         }
 
         .form-group {
             margin-bottom: 20px;
         }
 
-        label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
+            font-weight: 600;
             color: #333;
-            font-weight: 500;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="date"],
-        textarea,
-        select {
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -81,30 +112,58 @@
             font-size: 14px;
         }
 
-        textarea {
+        .form-group textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 100px;
         }
 
-        .row {
+        .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
 
-        .canvas-container {
-            border: 2px solid #0066cc;
-            border-radius: 5px;
+        .checkbox-group {
             margin: 15px 0;
-            background: #f9f9f9;
         }
 
-        canvas {
-            display: block;
-            cursor: crosshair;
-            width: 100%;
-            height: 150px;
-            touch-action: none;
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #0d47a1;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        .info-box strong {
+            color: #0d47a1;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
 
         button {
@@ -120,9 +179,8 @@
         .btn-primary {
             background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
             color: white;
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
+            flex: 1;
+            min-width: 200px;
         }
 
         .btn-primary:hover {
@@ -140,10 +198,28 @@
             background: #e0e0e0;
         }
 
-        .signature-status {
-            padding: 15px;
+        .signature-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
             border-radius: 5px;
-            margin-top: 10px;
+        }
+
+        .signature-canvas {
+            border: 2px solid #0d47a1;
+            border-radius: 5px;
+            margin: 15px 0;
+            background: white;
+            display: block;
+            width: 100%;
+            height: 150px;
+            cursor: crosshair;
+        }
+
+        .signature-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
             font-weight: 500;
         }
 
@@ -157,19 +233,6 @@
             background: #d4edda;
             color: #155724;
             border: 1px solid #28a745;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
         }
 
         .success-message {
@@ -199,7 +262,7 @@
 
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #0066cc;
+            border-top: 4px solid #0d47a1;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -211,19 +274,68 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+        }
+
+        .page-break {
+            page-break-after: always;
+            margin: 40px 0;
+        }
+
+        .terminos-section {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .terminos-section h4 {
+            color: #0d47a1;
+            margin: 15px 0 10px 0;
+            font-size: 15px;
+        }
+
+        .terminos-section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-size: 13px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 Conformidad de Capacitación</h1>
-            <p>Firma digital del documento de capacitación</p>
+            <div class="logo-header">
+                <div class="logo-box logo-c">C</div>
+                <div class="logo-box logo-o">O</div>
+                <div class="logo-box logo-m">m</div>
+                <div class="logo-box logo-o2">o</div>
+            </div>
+            <h1>DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
+            <p>Capacitación de Personal de Nuevo Ingreso - Área de Ventas</p>
         </div>
 
         <div class="content">
             <div class="success-message" id="successMessage">
-                <h3>✓ Documento firmado exitosamente</h3>
-                <p>Se ha descargado tu PDF con toda la información y tu firma digital</p>
+                <h3>✓ Formulario enviado exitosamente</h3>
+                <p>Se ha descargado tu PDF de conformidad</p>
             </div>
 
             <div class="loading" id="loading">
@@ -231,148 +343,272 @@
                 <p>Generando tu PDF...</p>
             </div>
 
-            <form id="conformityForm">
-                <!-- DATOS DEL PARTICIPANTE -->
-                <div class="form-section">
-                    <h2>1. Datos del Participante</h2>
-                    <div class="row">
+            <form id="mainForm">
+                <!-- SECCIÓN 1: DATOS DEL PARTICIPANTE -->
+                <div class="section">
+                    <h2 class="section-title">1. DATOS DEL PARTICIPANTE</h2>
+
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="nombreParticipante">Nombre Completo *</label>
-                            <input type="text" id="nombreParticipante" required>
+                            <label>Nombre Completo *</label>
+                            <input type="text" id="nombre" required>
                         </div>
                         <div class="form-group">
-                            <label for="emailParticipante">Correo Electrónico *</label>
-                            <input type="email" id="emailParticipante" required>
+                            <label>Número de Teléfono *</label>
+                            <input type="tel" id="telefono" required>
                         </div>
                     </div>
-                    <div class="row">
+
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="duiParticipante">DUI *</label>
-                            <input type="text" id="duiParticipante" required>
+                            <label>Correo Electrónico *</label>
+                            <input type="email" id="email" required>
                         </div>
                         <div class="form-group">
-                            <label for="fechaParticipante">Fecha de Firma *</label>
-                            <input type="date" id="fechaParticipante" required>
+                            <label>DUI *</label>
+                            <input type="text" id="dui" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Canal al que aplica *</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="canal_paneles" name="canal" value="Paneles" required>
+                                <label for="canal_paneles">Paneles</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="canal_promotoria" name="canal" value="Promotoría">
+                                <label for="canal_promotoria">Promotoría</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Supervisor *</label>
+                        <input type="text" id="supervisor" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Talla de Camisa *</label>
+                            <select id="talla" required>
+                                <option value="">Selecciona una talla</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha *</label>
+                            <input type="date" id="fecha" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reingreso a COMO *</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_como_si" name="reingreso_como" value="Si" required>
+                                <label for="reingreso_como_si">Si</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_como_no" name="reingreso_como" value="No">
+                                <label for="reingreso_como_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reingreso a la Marca *</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_marca_si" name="reingreso_marca" value="Si" required>
+                                <label for="reingreso_marca_si">Si</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_marca_no" name="reingreso_marca" value="No">
+                                <label for="reingreso_marca_no">No</label>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- INFORMACIÓN DE LA CAPACITACIÓN -->
-                <div class="form-section">
-                    <h2>2. Información de la Capacitación</h2>
-                    <div class="row">
+                <!-- SECCIÓN 2: INFORMACIÓN DE LA CAPACITACIÓN -->
+                <div class="section">
+                    <h2 class="section-title">2. INFORMACIÓN DE LA CAPACITACIÓN</h2>
+
+                    <div class="form-group">
+                        <label>Tipo de Capacitación</label>
+                        <input type="text" value="Capacitación de personal de nuevo ingreso del área de ventas" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="nombreCapacitacion">Nombre del Curso/Capacitación *</label>
-                            <input type="text" id="nombreCapacitacion" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="fechaCapacitacion">Fecha de Capacitación *</label>
+                            <label>Fecha de Capacitación *</label>
                             <input type="date" id="fechaCapacitacion" required>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="duracionCapacitacion">Duración (en horas) *</label>
-                        <input type="text" id="duracionCapacitacion" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="instructor">Instructor/a *</label>
-                        <input type="text" id="instructor" required>
-                    </div>
-                </div>
-
-                <!-- CONTENIDOS BRINDADOS -->
-                <div class="form-section">
-                    <h2>3. Contenidos Brindados</h2>
-                    <div class="form-group">
-                        <label for="contenidosCapacitacion">Detalle de Contenidos *</label>
-                        <textarea id="contenidosCapacitacion" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="objetivosCapacitacion">Objetivos de la Capacitación *</label>
-                        <textarea id="objetivosCapacitacion" required></textarea>
-                    </div>
-                </div>
-
-                <!-- CONDICIONES DE PAGO Y ACCESO -->
-                <div class="form-section">
-                    <h2>4. Condiciones de Pago y Acceso</h2>
-                    <div class="row">
                         <div class="form-group">
-                            <label for="montoCapacitacion">Monto Total ($) *</label>
-                            <input type="text" id="montoCapacitacion" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="metodoPago">Método de Pago *</label>
-                            <select id="metodoPago" required>
-                                <option value="">Selecciona un método</option>
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
-                                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
-                                <option value="Cheque">Cheque</option>
-                                <option value="Otro">Otro</option>
+                            <label>Duración *</label>
+                            <select id="duracion" required>
+                                <option value="">Selecciona duración</option>
+                                <option value="Media jornada (1 día)">Media jornada (1 día)</option>
+                                <option value="Jornada completa (2 días o más)">Jornada completa (2 días o más)</option>
                             </select>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label for="condicionesPago">Condiciones de Pago y Políticas de Reembolso *</label>
-                        <textarea id="condicionesPago" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="materialesIncluidos">Materiales Incluidos *</label>
-                        <textarea id="materialesIncluidos" required></textarea>
+                        <label>Instructor *</label>
+                        <select id="instructor" required>
+                            <option value="">Selecciona instructor</option>
+                            <option value="Pedro Fernando Meléndez Ramírez">Pedro Fernando Meléndez Ramírez</option>
+                            <option value="Rodolfo Alberto Hernández Hernández">Rodolfo Alberto Hernández Hernández</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- TÉRMINOS Y CONDICIONES -->
-                <div class="form-section">
-                    <h2>5. Aceptación y Términos</h2>
-                    <div class="form-group">
-                        <label for="terminosCondiciones">Términos y Condiciones Generales *</label>
-                        <textarea id="terminosCondiciones" required></textarea>
-                    </div>
-                    
+                <!-- SECCIÓN 3: CONTENIDOS BRINDADOS -->
+                <div class="section">
+                    <h2 class="section-title">3. CONTENIDOS BRINDADOS</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Seleccione los temas tratados durante la capacitación:</p>
+
                     <div class="checkbox-group">
-                        <input type="checkbox" id="acepta1" required>
-                        <label for="acepta1" style="margin: 0;">He revisado y entiendo los contenidos</label>
-                    </div>
-                    
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="acepta2" required>
-                        <label for="acepta2" style="margin: 0;">Confirmo las condiciones de pago</label>
-                    </div>
-                    
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="acepta3" required>
-                        <label for="acepta3" style="margin: 0;">Acepto los términos y condiciones</label>
-                    </div>
-                    
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="acepta4" required>
-                        <label for="acepta4" style="margin: 0;">Autorizo el envío de confirmación</label>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont1" name="contenidos" value="Políticas y dinámica de trabajo de la empresa">
+                            <label for="cont1">Políticas y dinámica de trabajo de la empresa</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont2" name="contenidos" value="Horarios de trabajo (Los horarios de entrada y salida pueden variar según consideraciones de supervisor y temporada)">
+                            <label for="cont2">Horarios de trabajo (Los horarios de entrada y salida pueden variar según consideraciones de supervisor y temporada)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont3" name="contenidos" value="Introducción al puesto de trabajo">
+                            <label for="cont3">Introducción al puesto de trabajo</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont4" name="contenidos" value="Información sobre acciones de personal">
+                            <label for="cont4">Información sobre acciones de personal</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont5" name="contenidos" value="Activación de simcard, y realización de portabilidad en bot y página web">
+                            <label for="cont5">Activación de simcard, y realización de portabilidad en bot y página web</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont6" name="contenidos" value="Registro de ventas en Aura e Icaro">
+                            <label for="cont6">Registro de ventas en Aura e Icaro</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont7" name="contenidos" value="Oferta comercial de paquetes, smartphones al crédito y contado en plataformas">
+                            <label for="cont7">Oferta comercial de paquetes, smartphones al crédito y contado en plataformas</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont8" name="contenidos" value="Política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar y COMO">
+                            <label for="cont8">Política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar y COMO</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont9" name="contenidos" value="Ejercicio en bot de telefónica para el ingreso de activaciones y portabilidad">
+                            <label for="cont9">Ejercicio en bot de telefónica para el ingreso de activaciones y portabilidad</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont10" name="contenidos" value="Que la plaza es 100% de campo y recomendaciones para ejercerlo">
+                            <label for="cont10">Que la plaza es 100% de campo y recomendaciones para ejercerlo</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont11" name="contenidos" value="Las condiciones de comisiones actuales">
+                            <label for="cont11">Las condiciones de comisiones actuales</label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- FIRMA DIGITAL -->
-                <div class="form-section">
-                    <h2>6. Firma Digital</h2>
-                    <p style="margin-bottom: 15px; color: #666;">Por favor, firma en el espacio inferior.</p>
-                    
-                    <div class="canvas-container">
-                        <canvas id="signatureCanvas"></canvas>
+                <!-- SECCIÓN 4: CONFIRMACIÓN DE COMPRENSIÓN -->
+                <div class="section">
+                    <h2 class="section-title">4. POR LO QUE HAGO CONSTAR QUE:</h2>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp1" name="comprension" required>
+                            <label for="comp1">Comprendí la dinámica de trabajo, horarios y permisos laborales y sé cuáles son los procesos para seguir o en su defecto a quién dirigirme ante una situación que pueda enfrentar que imposibilite el cumplimiento de estos y los procesos o consecuencias de no seguir los criterios bajo la normativa del reglamento y políticas internas tanto del código de trabajo que la empresa implementará.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp2" name="comprension" required>
+                            <label for="comp2">Comprendí la dinámica de trabajo en campo y el manejo de los sistemas de activación, registro y facturación que utilizaré, comprometiéndome a ejercer mis funciones de ventas bajo los criterios y lineamiento de la empresa.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp3" name="comprension" required>
+                            <label for="comp3">Fui instruido/a sobre la política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar a comercializar en mis actividades diarias.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp4" name="comprension" required>
+                            <label for="comp4">Comprendí la oferta comercial activa presentada por el capacitador y me comprometo a darle seguimiento y repaso a la oferta.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp5" name="comprension" required>
+                            <label for="comp5">Comprendí la responsabilidad que poseo al portar uniformes que representen la marca MOVISTAR EL SALVADOR.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp6" name="comprension" required>
+                            <label for="comp6">Comprendí y acepto las condiciones de pago de comisión proporcional durante 3 meses.</label>
+                        </div>
                     </div>
+                </div>
+
+                <!-- SECCIÓN 5: TÉRMINOS Y CONDICIONES -->
+                <div class="section">
+                    <h2 class="section-title">5. ACEPTACIÓN Y TÉRMINOS</h2>
+
+                    <div class="info-box">
+                        <strong>TÉRMINOS Y CONDICIONES GENERALES</strong>
+                    </div>
+
+                    <div class="terminos-section">
+                        <h4>1. Naturaleza del documento:</h4>
+                        <p>Esta constancia no constituye un contrato laboral, ni genera derechos o compromisos adicionales a los establecidos por la ley o por el contrato individual de trabajo. Su finalidad es dejar constancia de la participación y comprensión de los temas abordados durante la capacitación de inducción.</p>
+
+                        <h4>2. Firma digital:</h4>
+                        <p>Al firmar electrónicamente este documento, el participante confirma su asistencia y comprensión de los contenidos descritos, así como su compromiso de aplicar lo aprendido en el desempeño de sus funciones. La firma digital o electrónica tiene la misma validez que una firma manuscrita para efectos de registro interno.</p>
+
+                        <h4>3. Resguardo y confidencialidad:</h4>
+                        <p>El documento será almacenado en formato digital dentro del sistema interno de la empresa y una copia será entregada al participante de forma virtual. Esta constancia se utiliza como evidencia administrativa de participación y comprensión de los temas explicados durante la inducción.</p>
+
+                        <h4>4. Actualización de contenidos:</h4>
+                        <p>La empresa podrá actualizar los temas de inducción o modificar procedimientos según necesidades operativas, legales o de seguridad. El colaborador se compromete a mantenerse informado de dichos cambios y participar en futuras capacitaciones cuando sean convocadas.</p>
+
+                        <h4>5. Aceptación:</h4>
+                        <p>Al firmar, el colaborador declara que leyó, comprendió y acepta el contenido del presente documento, así como las políticas, dinámicas y procedimientos explicados durante la capacitación.</p>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="acepta" required>
+                            <label for="acepta">Acepto los términos y condiciones descritos arriba</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 6: FIRMA DIGITAL -->
+                <div class="section signature-section">
+                    <h2 class="section-title">6. FIRMA DIGITAL</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Por favor, firma en el espacio inferior. Usa tu mouse o dedo en dispositivos táctiles.</p>
+                    
+                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
                     <div id="signatureStatus" class="signature-status status-pending">
                         ✏️ Esperando firma...
                     </div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <div class="buttons">
                         <button type="button" class="btn-secondary" onclick="clearSignature()">🔄 Limpiar Firma</button>
                     </div>
                 </div>
 
                 <!-- BOTONES FINALES -->
-                <div class="form-section">
-                    <button type="submit" class="btn-primary">
-                        ✓ Firmar y Descargar PDF Completo
-                    </button>
+                <div class="section">
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="limpiarFormulario()">Limpiar Formulario</button>
+                        <button type="submit" class="btn-primary">✓ Generar PDF de Conformidad</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -380,7 +616,7 @@
 
     <script>
         const canvas = document.getElementById('signatureCanvas');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const ctx = canvas.getContext('2d');
         let isDrawing = false;
         let hasSignature = false;
 
@@ -422,7 +658,7 @@
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = '#0d47a1';
             ctx.lineTo(x, y);
             ctx.stroke();
         }
@@ -445,7 +681,7 @@
                 ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
-                ctx.strokeStyle = '#333';
+                ctx.strokeStyle = '#0d47a1';
                 ctx.lineTo(x, y);
                 ctx.stroke();
             }
@@ -474,65 +710,77 @@
             status.innerHTML = '✏️ Esperando firma...';
         }
 
-        document.getElementById('fechaParticipante').valueAsDate = new Date();
+        // Fecha actual
+        document.getElementById('fecha').valueAsDate = new Date();
 
-        document.getElementById('conformityForm').addEventListener('submit', function(e) {
+        // Limpiar formulario
+        function limpiarFormulario() {
+            document.getElementById('mainForm').reset();
+            clearSignature();
+            document.getElementById('fecha').valueAsDate = new Date();
+        }
+
+        // Obtener contenidos seleccionados
+        function getContenidosSeleccionados() {
+            const checkboxes = document.querySelectorAll('input[name="contenidos"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // Obtener comprensiones seleccionadas
+        function getComprensioneSeleccionadas() {
+            const checkboxes = document.querySelectorAll('input[name="comprension"]:checked');
+            return checkboxes.length;
+        }
+
+        // Envío del formulario
+        document.getElementById('mainForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             if (!hasSignature) {
-                alert('Por favor, firma el documento');
+                alert('Por favor, firma el documento antes de continuar');
+                return;
+            }
+
+            if (getComprensioneSeleccionadas() < 6) {
+                alert('Por favor, marca todas las casillas de comprensión');
                 return;
             }
 
             document.getElementById('loading').classList.add('show');
 
             setTimeout(() => {
-                generatePDF();
+                generarPDF();
                 document.getElementById('loading').classList.remove('show');
                 document.getElementById('successMessage').classList.add('show');
 
                 setTimeout(() => {
-                    document.getElementById('conformityForm').reset();
-                    clearSignature();
                     document.getElementById('successMessage').classList.remove('show');
+                    limpiarFormulario();
                 }, 3000);
             }, 800);
         });
 
-        function generatePDF() {
+        function generarPDF() {
             const { jsPDF } = window.jspdf;
             
-            const nombre = document.getElementById('nombreParticipante').value;
-            const dui = document.getElementById('duiParticipante').value;
-            const email = document.getElementById('emailParticipante').value;
-            const nombreCapacitacion = document.getElementById('nombreCapacitacion').value;
-            const duracion = document.getElementById('duracionCapacitacion').value;
-            const instructor = document.getElementById('instructor').value;
+            const nombre = document.getElementById('nombre').value;
+            const telefono = document.getElementById('telefono').value;
+            const email = document.getElementById('email').value;
+            const dui = document.getElementById('dui').value;
+            const canal = document.querySelector('input[name="canal"]:checked').value;
+            const supervisor = document.getElementById('supervisor').value;
+            const talla = document.getElementById('talla').value;
+            const fecha = document.getElementById('fecha').value;
+            const reingresoComo = document.querySelector('input[name="reingreso_como"]:checked').value;
+            const reingresoMarca = document.querySelector('input[name="reingreso_marca"]:checked').value;
             const fechaCapacitacion = document.getElementById('fechaCapacitacion').value;
-            const contenidos = document.getElementById('contenidosCapacitacion').value;
-            const objetivos = document.getElementById('objetivosCapacitacion').value;
-            const monto = document.getElementById('montoCapacitacion').value;
-            const metodoPago = document.getElementById('metodoPago').value;
-            const condicionesPago = document.getElementById('condicionesPago').value;
-            const materialesIncluidos = document.getElementById('materialesIncluidos').value;
-            const terminosCondiciones = document.getElementById('terminosCondiciones').value;
-            
-            const fechaActual = new Date().toLocaleDateString('es-ES');
-            const horaActual = new Date().toLocaleTimeString('es-ES');
+            const duracion = document.getElementById('duracion').value;
+            const instructor = document.getElementById('instructor').value;
+            const contenidos = getContenidosSeleccionados();
             const signatureImage = canvas.toDataURL('image/png');
+            const fechaActual = new Date().toLocaleDateString('es-ES');
 
-            const doc = new jsPDF({
-                orientation: 'p',
-                unit: 'mm',
-                format: 'a4',
-                compress: true,
-                precision: 16,
-                userUnit: 1.0
-            });
-
-            // Usar fuente Helvetica que soporta bien caracteres latinos
-            doc.setFont('helvetica', 'normal');
-            
+            const doc = new jsPDF('p', 'mm', 'a4');
             let y = 15;
             const pageHeight = doc.internal.pageSize.getHeight();
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -541,6 +789,7 @@
             function newPage() {
                 doc.addPage();
                 y = 15;
+                addHeader();
             }
 
             function checkSpace(height = 10) {
@@ -549,37 +798,40 @@
                 }
             }
 
-            // Header
-            doc.setFillColor(13, 71, 161);
-            doc.rect(0, 0, pageWidth, 20, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text('DOCUMENTO DE CONFORMIDAD', pageWidth / 2, 8, { align: 'center' });
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Capacitación y Formación Profesional', pageWidth / 2, 14, { align: 'center' });
-            
+            function addHeader() {
+                // Header azul
+                doc.setFillColor(13, 71, 161);
+                doc.rect(0, 0, pageWidth, 20, 'F');
+                
+                // Logo
+                const logoX = 10;
+                const logoY = 3;
+                const logoSize = 3.5;
+                doc.setLineWidth(0.15);
+                doc.setDrawColor(255, 255, 255);
+                
+                doc.setFillColor(255, 255, 255);
+                doc.rect(logoX, logoY, logoSize, logoSize, 'F');
+                doc.setFillColor(255, 255, 255);
+                doc.rect(logoX + logoSize, logoY, logoSize, logoSize, 'F');
+                doc.setFillColor(255, 255, 255);
+                doc.rect(logoX, logoY + logoSize, logoSize, logoSize, 'F');
+                doc.setFillColor(13, 71, 161);
+                doc.rect(logoX + logoSize, logoY + logoSize, logoSize, logoSize, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text('CONFORMIDAD DE CAPACITACIÓN', pageWidth / 2, 8, { align: 'center' });
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Capacitación de Personal de Nuevo Ingreso', pageWidth / 2, 14, { align: 'center' });
+            }
+
+            addHeader();
             y = 25;
 
-            // Copia para empleado
-            doc.setFillColor(240, 244, 248);
-            doc.rect(0, y - 3, pageWidth, 8, 'F');
-            doc.setTextColor(13, 71, 161);
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'bold');
-            doc.text('COPIA PARA EL EMPLEADO', pageWidth / 2, y + 1, { align: 'center' });
-            doc.setFont('helvetica', 'normal');
-            y += 12;
-
-            // Info
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(8);
-            doc.text(`Fecha: ${fechaActual}  |  Hora: ${horaActual}  |  ID: #${Date.now().toString().slice(-8)}`, margin, y);
-            y += 8;
-
-            // PARTICIPANTE
-            checkSpace();
+            // DATOS DEL PARTICIPANTE
             doc.setFillColor(13, 71, 161);
             doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
             doc.setTextColor(255, 255, 255);
@@ -588,37 +840,49 @@
             doc.text('DATOS DEL PARTICIPANTE', margin, y + 1);
             doc.setFont('helvetica', 'normal');
             y += 8;
-            
+
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(9);
             doc.text(`Nombre: ${nombre}`, margin, y);
             y += 5;
-            doc.text(`DUI: ${dui}`, margin, y);
+            doc.text(`Teléfono: ${telefono}`, margin, y);
             y += 5;
             doc.text(`Email: ${email}`, margin, y);
-            y += 8;
+            y += 5;
+            doc.text(`DUI: ${dui}`, margin, y);
+            y += 5;
+            doc.text(`Canal: ${canal}`, margin, y);
+            y += 5;
+            doc.text(`Supervisor: ${supervisor}`, margin, y);
+            y += 5;
+            doc.text(`Talla: ${talla}`, margin, y);
+            y += 5;
+            doc.text(`Fecha: ${fecha}`, margin, y);
+            y += 5;
+            doc.text(`Reingreso COMO: ${reingresoComo}`, margin, y);
+            y += 5;
+            doc.text(`Reingreso Marca: ${reingresoMarca}`, margin, y);
+            y += 10;
 
-            // CAPACITACIÓN
+            // INFORMACIÓN DE LA CAPACITACIÓN
             checkSpace();
             doc.setFillColor(13, 71, 161);
             doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.text('INFORMACION DE LA CAPACITACION', margin, y + 1);
+            doc.text('INFORMACIÓN DE LA CAPACITACIÓN', margin, y + 1);
             doc.setFont('helvetica', 'normal');
             y += 8;
 
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(9);
-            doc.text(`Curso: ${nombreCapacitacion}`, margin, y);
+            doc.text(`Fecha: ${fechaCapacitacion}`, margin, y);
             y += 5;
-            doc.text(`Duracion: ${duracion}`, margin, y);
+            doc.text(`Duración: ${duracion}`, margin, y);
             y += 5;
             doc.text(`Instructor: ${instructor}`, margin, y);
-            y += 5;
-            doc.text(`Fecha: ${fechaCapacitacion}`, margin, y);
-            y += 8;
+            y += 10;
 
             // CONTENIDOS
             checkSpace();
@@ -633,78 +897,14 @@
 
             doc.setFontSize(8);
             doc.setTextColor(0, 0, 0);
-            const contenidosLines = doc.splitTextToSize(`Temas: ${contenidos}`, pageWidth - 2 * margin);
-            doc.text(contenidosLines, margin, y);
-            y += contenidosLines.length * 3.5 + 4;
+            contenidos.forEach((contenido, index) => {
+                checkSpace();
+                const lines = doc.splitTextToSize(`${index + 1}. ${contenido}`, pageWidth - 2 * margin - 3);
+                doc.text(lines, margin + 2, y);
+                y += lines.length * 3.5 + 2;
+            });
 
-            checkSpace();
-            const objetivosLines = doc.splitTextToSize(`Objetivos: ${objetivos}`, pageWidth - 2 * margin);
-            doc.text(objetivosLines, margin, y);
-            y += objetivosLines.length * 3.5 + 8;
-
-            // PAGO
-            checkSpace();
-            doc.setFillColor(13, 71, 161);
-            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('CONDICIONES DE PAGO', margin, y + 1);
-            doc.setFont('helvetica', 'normal');
-            y += 8;
-
-            doc.setFontSize(8);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Monto: $${monto}  |  Metodo: ${metodoPago}`, margin, y);
             y += 5;
-
-            const condicionesLines = doc.splitTextToSize(`Condiciones: ${condicionesPago}`, pageWidth - 2 * margin);
-            doc.text(condicionesLines, margin, y);
-            y += condicionesLines.length * 3.5 + 4;
-
-            checkSpace();
-            const materialesLines = doc.splitTextToSize(`Materiales: ${materialesIncluidos}`, pageWidth - 2 * margin);
-            doc.text(materialesLines, margin, y);
-            y += materialesLines.length * 3.5 + 8;
-
-            // TÉRMINOS
-            checkSpace();
-            doc.setFillColor(13, 71, 161);
-            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('TERMINOS Y CONDICIONES', margin, y + 1);
-            doc.setFont('helvetica', 'normal');
-            y += 8;
-
-            doc.setFontSize(8);
-            doc.setTextColor(0, 0, 0);
-            const terminosLines = doc.splitTextToSize(terminosCondiciones, pageWidth - 2 * margin);
-            doc.text(terminosLines, margin, y);
-            y += terminosLines.length * 3.5 + 8;
-
-            // CONFORMIDAD
-            checkSpace(20);
-            doc.setFillColor(13, 71, 161);
-            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('CONFORMIDAD Y ACEPTACION', margin, y + 1);
-            doc.setFont('helvetica', 'normal');
-            y += 8;
-
-            doc.setFillColor(212, 237, 218);
-            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 18, 'F');
-            doc.setTextColor(21, 87, 36);
-            doc.setFontSize(8);
-            doc.text('El participante CONFIRMA Y ACEPTA:', margin, y);
-            doc.text('- He revisado y entendido los contenidos de la capacitacion', margin + 2, y + 4);
-            doc.text('- Comprendo las condiciones de pago', margin + 2, y + 7);
-            doc.text('- Acepto los terminos y condiciones', margin + 2, y + 10);
-            doc.text('- Autorizo el envio de confirmaciones', margin + 2, y + 13);
-            y += 22;
 
             // FIRMA
             checkSpace(50);
@@ -722,7 +922,9 @@
 
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(9);
-            doc.text(`${nombre} | DUI: ${dui} | ${fechaActual}`, pageWidth / 2, y, { align: 'center' });
+            doc.text(`${nombre}`, margin, y);
+            doc.text(`${dui}`, pageWidth / 2, y);
+            doc.text(`${fechaActual}`, pageWidth - margin - 30, y);
 
             const filename = `Conformidad_${nombre.replace(/\s+/g, '_')}_${dui}_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(filename);
