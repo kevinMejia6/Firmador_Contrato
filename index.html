@@ -906,8 +906,90 @@
 
             y += 5;
 
+            // COMPRENSIÓN
+            checkSpace();
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('POR LO QUE HAGO CONSTAR QUE:', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
+
+            doc.setFontSize(8);
+            doc.setTextColor(0, 0, 0);
+            
+            const comprensiones = [
+                'Comprendí la dinámica de trabajo, horarios y permisos laborales y sé cuáles son los procesos para seguir.',
+                'Comprendí la dinámica de trabajo en campo y el manejo de los sistemas de activación, registro y facturación.',
+                'Fui instruido/a sobre la política interna sobre Fraude, usurpación de identidad y sobreprecios.',
+                'Comprendí la oferta comercial activa presentada por el capacitador.',
+                'Comprendí la responsabilidad que poseo al portar uniformes de MOVISTAR EL SALVADOR.',
+                'Comprendí y acepto las condiciones de pago de comisión proporcional durante 3 meses.'
+            ];
+
+            comprensiones.forEach((comp, idx) => {
+                checkSpace();
+                const lines = doc.splitTextToSize(`${idx + 1}. ${comp}`, pageWidth - 2 * margin - 5);
+                doc.text(lines, margin + 2, y);
+                y += lines.length * 3 + 3;
+            });
+
+            y += 5;
+
+            // TÉRMINOS Y CONDICIONES
+            newPage();
+            
+            doc.setFillColor(13, 71, 161);
+            doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('TÉRMINOS Y CONDICIONES GENERALES', margin, y + 1);
+            doc.setFont('helvetica', 'normal');
+            y += 8;
+
+            doc.setFontSize(8);
+            doc.setTextColor(0, 0, 0);
+
+            const terminos = [
+                {
+                    titulo: '1. Naturaleza del documento:',
+                    texto: 'Esta constancia no constituye un contrato laboral, ni genera derechos o compromisos adicionales a los establecidos por la ley o por el contrato individual de trabajo. Su finalidad es dejar constancia de la participación y comprensión de los temas abordados durante la capacitación de inducción.'
+                },
+                {
+                    titulo: '2. Firma digital:',
+                    texto: 'Al firmar electrónicamente este documento, el participante confirma su asistencia y comprensión de los contenidos descritos, así como su compromiso de aplicar lo aprendido en el desempeño de sus funciones. La firma digital o electrónica tiene la misma validez que una firma manuscrita para efectos de registro interno y cumplimiento de procesos de capacitación.'
+                },
+                {
+                    titulo: '3. Resguardo y confidencialidad:',
+                    texto: 'El documento será almacenado en formato digital dentro del sistema interno de la empresa y una copia será entregada al participante de forma virtual para su propio registro y respaldo. Esta constancia se utiliza como evidencia administrativa de participación y comprensión de los temas explicados durante la inducción, incluyendo condiciones operativas, dinámicas laborales y políticas internas de comisiones y desempeño.'
+                },
+                {
+                    titulo: '4. Actualización de contenidos:',
+                    texto: 'La empresa podrá actualizar los temas de inducción o modificar procedimientos según necesidades operativas, legales o de seguridad. El colaborador se compromete a mantenerse informado de dichos cambios y participar en futuras capacitaciones cuando sean convocadas.'
+                },
+                {
+                    titulo: '5. Aceptación:',
+                    texto: 'Al firmar, el colaborador declara que leyó, comprendió y acepta el contenido del presente documento, así como las políticas, dinámicas y procedimientos explicados durante la capacitación.'
+                }
+            ];
+
+            terminos.forEach(termino => {
+                checkSpace();
+                doc.setFont('helvetica', 'bold');
+                doc.text(termino.titulo, margin, y);
+                y += 4;
+                doc.setFont('helvetica', 'normal');
+                const lines = doc.splitTextToSize(termino.texto, pageWidth - 2 * margin - 2);
+                doc.text(lines, margin + 2, y);
+                y += lines.length * 3.5 + 3;
+            });
+
             // FIRMA
-            checkSpace(50);
+            newPage();
+            
             doc.setFillColor(13, 71, 161);
             doc.rect(margin - 2, y - 3, pageWidth - 2 * margin + 4, 6, 'F');
             doc.setTextColor(255, 255, 255);
@@ -922,9 +1004,11 @@
 
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(9);
-            doc.text(`${nombre}`, margin, y);
-            doc.text(`${dui}`, pageWidth / 2, y);
-            doc.text(`${fechaActual}`, pageWidth - margin - 30, y);
+            doc.text(`Nombre: ${nombre}`, margin, y);
+            y += 5;
+            doc.text(`DUI: ${dui}`, margin, y);
+            y += 5;
+            doc.text(`Fecha: ${fechaActual}`, margin, y);
 
             const filename = `Conformidad_${nombre.replace(/\s+/g, '_')}_${dui}_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(filename);
