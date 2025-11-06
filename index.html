@@ -1,1609 +1,1314 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conformidad de Capacitación - COMO</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        width: 100%;
-        height: 100%;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        min-height: 100vh;
-        padding: 10px;
-        margin: 0;
-      }
-
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.4);
-        overflow: hidden;
-      }
-
-      .header {
-        background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
-        color: white;
-        padding: 20px 15px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap;
-      }
-
-      .logo-header {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0;
-        width: 80px;
-        height: 80px;
-        flex-shrink: 0;
-      }
-
-      .logo-box {
-        width: 40px;
-        height: 40px;
-        font-weight: bold;
-        font-size: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid black;
-      }
-
-      .logo-c {
-        background: black;
-        color: white;
-        border: none;
-      }
-      .logo-o {
-        background: white;
-        color: black;
-      }
-      .logo-m {
-        background: white;
-        color: black;
-      }
-      .logo-o2 {
-        background: black;
-        color: white;
-        border: none;
-      }
-
-      .header-text h1 {
-        font-size: 24px;
-        font-weight: bold;
-        line-height: 1.2;
-        margin-bottom: 5px;
-      }
-
-      .header-text p {
-        font-size: 13px;
-        opacity: 0.95;
-      }
-
-      .content {
-        padding: 30px;
-      }
-
-      .form-section {
-        margin-bottom: 35px;
-        padding-bottom: 25px;
-        border-bottom: 2px solid #e0e0e0;
-      }
-
-      .form-section:last-of-type {
-        border-bottom: none;
-      }
-
-      .section-title {
-        font-size: 18px;
-        font-weight: bold;
-        color: #0d47a1;
-        margin-bottom: 20px;
-        padding-bottom: 12px;
-        border-bottom: 3px solid #0d47a1;
-        display: inline-block;
-      }
-
-      .form-group {
-        margin-bottom: 18px;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #333;
-        font-size: 14px;
-      }
-
-      .form-group input,
-      .form-group select,
-      .form-group textarea {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid #ddd;
-        border-radius: 6px;
-        font-family: inherit;
-        font-size: 14px;
-        transition: all 0.3s;
-      }
-
-      .form-group input:focus,
-      .form-group select:focus,
-      .form-group textarea:focus {
-        outline: none;
-        border-color: #0d47a1;
-        box-shadow: 0 0 8px rgba(13, 71, 161, 0.2);
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
-
-      .checkbox-group {
-        margin: 15px 0;
-      }
-
-      .checkbox-item {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 16px;
-        gap: 12px;
-      }
-
-      .checkbox-item input {
-        width: 20px;
-        height: 20px;
-        margin-top: 3px;
-        cursor: pointer;
-        flex-shrink: 0;
-      }
-
-      .checkbox-item label {
-        margin: 0;
-        font-weight: normal;
-        cursor: pointer;
-        font-size: 13px;
-        line-height: 1.5;
-        color: #555;
-      }
-
-      .signature-canvas {
-        border: 3px solid #0d47a1;
-        border-radius: 6px;
-        margin: 15px 0;
-        background: white;
-        display: block;
-        width: 100%;
-        height: 150px;
-        cursor: crosshair;
-      }
-
-      .signature-status {
-        padding: 12px 15px;
-        border-radius: 6px;
-        margin: 10px 0;
-        font-weight: 500;
-        font-size: 14px;
-      }
-
-      .status-pending {
-        background: #fff3cd;
-        color: #856404;
-        border: 2px solid #ffc107;
-      }
-
-      .status-completed {
-        background: #d4edda;
-        color: #155724;
-        border: 2px solid #28a745;
-      }
-
-      .buttons {
-        display: flex;
-        gap: 12px;
-        margin-top: 25px;
-        flex-wrap: wrap;
-      }
-
-      button {
-        padding: 14px 28px;
-        border: none;
-        border-radius: 6px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        flex: 1;
-        min-width: 150px;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
-        color: white;
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(13, 71, 161, 0.4);
-      }
-
-      .btn-secondary {
-        background: #f0f0f0;
-        color: #333;
-        border: 2px solid #ddd;
-      }
-
-      .btn-secondary:hover {
-        background: #e0e0e0;
-      }
-
-      .success-message {
-        display: none;
-        background: #d4edda;
-        border: 2px solid #28a745;
-        color: #155724;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        text-align: center;
-        animation: slideIn 0.3s ease;
-      }
-
-      .success-message.show {
-        display: block;
-      }
-
-      .loading {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 40px 60px;
-        border-radius: 12px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        z-index: 9999;
-        text-align: center;
-        animation: slideIn 0.3s ease;
-      }
-
-      .loading.show {
-        display: block;
-      }
-
-      .spinner {
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid #0d47a1;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 20px;
-      }
-
-      .loading p {
-        color: #0d47a1;
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .toast {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 8px;
-        box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
-        z-index: 10000;
-        animation: slideInRight 0.4s ease;
-        display: none;
-        min-width: 300px;
-      }
-
-      .toast.show {
-        display: block;
-      }
-
-      .toast.error {
-        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-        box-shadow: 0 5px 20px rgba(220, 53, 69, 0.4);
-      }
-
-      .toast.warning {
-        background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
-        box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
-        color: #333;
-      }
-
-      @keyframes slideInRight {
-        from {
-          opacity: 0;
-          transform: translateX(400px);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
-
-      .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9998;
-      }
-
-      .overlay.show {
-        display: block;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .terminos-section {
-        background: #f5f5f5;
-        padding: 18px;
-        border-radius: 6px;
-        margin: 15px 0;
-      }
-
-      .terminos-section h4 {
-        color: #0d47a1;
-        margin: 15px 0 10px 0;
-        font-size: 14px;
-        font-weight: bold;
-      }
-
-      .terminos-section p {
-        margin-bottom: 12px;
-        line-height: 1.6;
-        font-size: 13px;
-        color: #555;
-      }
-
-      .info-box {
-        background: #f0f4ff;
-        border-left: 5px solid #0d47a1;
-        padding: 15px 18px;
-        margin: 20px 0;
-        border-radius: 4px;
-      }
-
-      @media (max-width: 768px) {
-        .header {
-          flex-direction: column;
-          text-align: center;
-          padding: 20px 15px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .logo-header {
-          width: 70px;
-          height: 70px;
-          margin: 0 auto;
+        html, body {
+            width: 100%;
+            height: 100%;
         }
 
-        .logo-box {
-          width: 35px;
-          height: 35px;
-          font-size: 28px;
-        }
-
-        .header-text h1 {
-          font-size: 20px;
-        }
-
-        .header-text p {
-          font-size: 12px;
-        }
-
-        .content {
-          padding: 20px 15px;
-        }
-
-        .form-section {
-          margin-bottom: 25px;
-          padding-bottom: 20px;
-        }
-
-        .section-title {
-          font-size: 16px;
-        }
-
-        .form-row {
-          grid-template-columns: 1fr;
-          gap: 15px;
-        }
-
-        .form-group label {
-          font-size: 13px;
-        }
-
-        .checkbox-item label {
-          font-size: 12px;
-        }
-
-        .buttons {
-          flex-direction: column;
-        }
-
-        button {
-          width: 100%;
-          min-width: auto;
-        }
-
-        .signature-canvas {
-          height: 130px;
-        }
-      }
-
-      @media (max-width: 480px) {
         body {
-          padding: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 10px;
+            margin: 0;
         }
 
         .container {
-          border-radius: 8px;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
         }
 
         .header {
-          padding: 15px 10px;
-          gap: 15px;
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            color: white;
+            padding: 20px 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .logo-header {
-          width: 60px;
-          height: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
         }
 
         .logo-box {
-          width: 30px;
-          height: 30px;
-          font-size: 24px;
-          border: 1.5px solid black;
+            width: 40px;
+            height: 40px;
+            font-weight: bold;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid black;
         }
 
+        .logo-c { background: black; color: white; border: none; }
+        .logo-o { background: white; color: black; }
+        .logo-m { background: white; color: black; }
+        .logo-o2 { background: black; color: white; border: none; }
+
         .header-text h1 {
-          font-size: 18px;
-          margin-bottom: 3px;
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 5px;
         }
 
         .header-text p {
-          font-size: 11px;
+            font-size: 13px;
+            opacity: 0.95;
         }
 
         .content {
-          padding: 15px 12px;
+            padding: 30px;
         }
 
         .form-section {
-          margin-bottom: 20px;
-          padding-bottom: 15px;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
         }
 
         .section-title {
-          font-size: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #0d47a1;
+            display: inline-block;
         }
 
         .form-group {
-          margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
-          font-size: 12px;
-          margin-bottom: 6px;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
-          font-size: 13px;
-          padding: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0d47a1;
+            box-shadow: 0 0 8px rgba(13, 71, 161, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .checkbox-group {
+            margin: 15px 0;
         }
 
         .checkbox-item {
-          margin-bottom: 12px;
-          gap: 10px;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            gap: 12px;
         }
 
         .checkbox-item input {
-          width: 18px;
-          height: 18px;
+            width: 20px;
+            height: 20px;
+            margin-top: 3px;
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         .checkbox-item label {
-          font-size: 11px;
-          line-height: 1.4;
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #555;
         }
 
         .signature-canvas {
-          height: 110px;
+            border: 3px solid #0d47a1;
+            border-radius: 6px;
+            margin: 15px 0;
+            background: white;
+            display: block;
+            width: 100%;
+            height: 150px;
+            cursor: crosshair;
+        }
+
+        .signature-status {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
         }
 
         .buttons {
-          gap: 10px;
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
         }
 
         button {
-          padding: 12px 16px;
-          font-size: 13px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 71, 161, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px 60px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 9999;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #0d47a1;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .loading p {
+            color: #0d47a1;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
+            z-index: 10000;
+            animation: slideInRight 0.4s ease;
+            display: none;
+            min-width: 300px;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            box-shadow: 0 5px 20px rgba(220, 53, 69, 0.4);
+        }
+
+        .toast.warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+            color: #333;
+        }
+
+        @keyframes slideInRight {
+            from { 
+                opacity: 0;
+                transform: translateX(400px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .terminos-section {
-          padding: 12px;
-          margin: 10px 0;
+            background: #f5f5f5;
+            padding: 18px;
+            border-radius: 6px;
+            margin: 15px 0;
         }
 
         .terminos-section h4 {
-          font-size: 12px;
-          margin: 10px 0 6px 0;
+            color: #0d47a1;
+            margin: 15px 0 10px 0;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         .terminos-section p {
-          font-size: 11px;
-          margin-bottom: 8px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 13px;
+            color: #555;
         }
-      }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 5px solid #0d47a1;
+            padding: 15px 18px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 15px;
+            }
+
+            .logo-header {
+                width: 70px;
+                height: 70px;
+                margin: 0 auto;
+            }
+
+            .logo-box {
+                width: 35px;
+                height: 35px;
+                font-size: 28px;
+            }
+
+            .header-text h1 {
+                font-size: 20px;
+            }
+
+            .header-text p {
+                font-size: 12px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .form-section {
+                margin-bottom: 25px;
+                padding-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .checkbox-item label {
+                font-size: 12px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .signature-canvas {
+                height: 130px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 8px;
+            }
+
+            .header {
+                padding: 15px 10px;
+                gap: 15px;
+            }
+
+            .logo-header {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-box {
+                width: 30px;
+                height: 30px;
+                font-size: 24px;
+                border: 1.5px solid black;
+            }
+
+            .header-text h1 {
+                font-size: 18px;
+                margin-bottom: 3px;
+            }
+
+            .header-text p {
+                font-size: 11px;
+            }
+
+            .content {
+                padding: 15px 12px;
+            }
+
+            .form-section {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+
+            .section-title {
+                font-size: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            .checkbox-item {
+                margin-bottom: 12px;
+                gap: 10px;
+            }
+
+            .checkbox-item input {
+                width: 18px;
+                height: 18px;
+            }
+
+            .checkbox-item label {
+                font-size: 11px;
+                line-height: 1.4;
+            }
+
+            .signature-canvas {
+                height: 110px;
+            }
+
+            .buttons {
+                gap: 10px;
+            }
+
+            button {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .terminos-section {
+                padding: 12px;
+                margin: 10px 0;
+            }
+
+            .terminos-section h4 {
+                font-size: 12px;
+                margin: 10px 0 6px 0;
+            }
+
+            .terminos-section p {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <div class="header">
-        <img
-          id="logoFormulario"
-          src="/logo_como.webp"
-          alt="Logo COMO"
-          class="logo-header"
-          style="width: 80px; height: 80px; object-fit: contain"
-        />
-        <div class="header-text">
-          <h1>DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
-          <p>Capacitación de Personal de Nuevo Ingreso - Área de Ventas</p>
-        </div>
-      </div>
-
-      <div class="overlay" id="overlay"></div>
-      <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <p>⏳ Generando tu PDF...</p>
-      </div>
-      <div class="toast" id="toast"></div>
-
-      <div class="content">
-        <div class="success-message" id="successMessage">
-          <h3>✓ Documento generado exitosamente</h3>
-          <p>Se ha descargado tu PDF de conformidad</p>
+        <div class="header">
+            <img id="logoFormulario" src="" alt="Logo COMO" class="logo-header" style="width: 80px; height: 80px; object-fit: contain;">
+            <div class="header-text">
+                <h1>DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
+                <p>Capacitación de Personal de Nuevo Ingreso - Área de Ventas</p>
+            </div>
         </div>
 
+        <div class="overlay" id="overlay"></div>
         <div class="loading" id="loading">
-          <div class="spinner"></div>
-          <p>Generando tu PDF...</p>
+            <div class="spinner"></div>
+            <p>⏳ Generando tu PDF...</p>
         </div>
+        <div class="toast" id="toast"></div>
 
-        <form id="mainForm">
-          <!-- SECCIÓN 1: DATOS DEL PARTICIPANTE -->
-          <div class="form-section">
-            <h2 class="section-title">1. DATOS DEL PARTICIPANTE</h2>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>Nombre Completo *</label>
-                <input type="text" id="nombre" required />
-              </div>
-              <div class="form-group">
-                <label>Número de Teléfono *</label>
-                <input type="tel" id="telefono" required />
-              </div>
+        <div class="content">
+            <div class="success-message" id="successMessage">
+                <h3>✓ Documento generado exitosamente</h3>
+                <p>Se ha descargado tu PDF de conformidad</p>
             </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label>Correo Electrónico *</label>
-                <input type="email" id="email" required />
-              </div>
-              <div class="form-group">
-                <label>DUI *</label>
-                <input type="text" id="dui" required />
-              </div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generando tu PDF...</p>
             </div>
 
-            <div class="form-group">
-              <label>Canal al que aplica *</label>
-              <div class="checkbox-group">
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="canal_paneles"
-                    name="canal"
-                    value="Paneles"
-                    required
-                  />
-                  <label for="canal_paneles">Paneles</label>
+            <form id="mainForm">
+                <!-- SECCIÓN 1: DATOS DEL PARTICIPANTE -->
+                <div class="form-section">
+                    <h2 class="section-title">1. DATOS DEL PARTICIPANTE</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre Completo *</label>
+                            <input type="text" id="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Número de Teléfono *</label>
+                            <input type="tel" id="telefono" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Correo Electrónico *</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>DUI *</label>
+                            <input type="text" id="dui" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Canal al que aplica *</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="canal_paneles" name="canal" value="Paneles" required>
+                                <label for="canal_paneles">Paneles</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="canal_promotoria" name="canal" value="Promotoría">
+                                <label for="canal_promotoria">Promotoría</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Supervisor *</label>
+                        <input type="text" id="supervisor" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Talla de Camisa *</label>
+                            <select id="talla" required>
+                                <option value="">Selecciona una talla</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha *</label>
+                            <input type="date" id="fecha" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reingreso a COMO *</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_como_si" name="reingreso_como" value="Si" required>
+                                <label for="reingreso_como_si">Si</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_como_no" name="reingreso_como" value="No">
+                                <label for="reingreso_como_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reingreso a la Marca *</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_marca_si" name="reingreso_marca" value="Si" required>
+                                <label for="reingreso_marca_si">Si</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="reingreso_marca_no" name="reingreso_marca" value="No">
+                                <label for="reingreso_marca_no">No</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="canal_promotoria"
-                    name="canal"
-                    value="Promotoría"
-                  />
-                  <label for="canal_promotoria">Promotoría</label>
+
+                <!-- SECCIÓN 2: INFORMACIÓN DE LA CAPACITACIÓN -->
+                <div class="form-section">
+                    <h2 class="section-title">2. INFORMACIÓN DE LA CAPACITACIÓN</h2>
+
+                    <div class="form-group">
+                        <label>Tipo de Capacitación</label>
+                        <input type="text" value="Capacitación de personal de nuevo ingreso del área de ventas" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha de Capacitación *</label>
+                            <input type="date" id="fechaCapacitacion" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Duración *</label>
+                            <select id="duracion" required>
+                                <option value="">Selecciona duración</option>
+                                <option value="Media jornada (1 día)">Media jornada (1 día)</option>
+                                <option value="Jornada completa (2 días o más)">Jornada completa (2 días o más)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Instructor *</label>
+                        <select id="instructor" required>
+                            <option value="">Selecciona instructor</option>
+                            <option value="Pedro Fernando Meléndez Ramírez">Pedro Fernando Meléndez Ramírez</option>
+                            <option value="Rodolfo Alberto Hernández Hernández">Rodolfo Alberto Hernández Hernández</option>
+                        </select>
+                    </div>
                 </div>
-              </div>
-            </div>
 
-            <div class="form-group">
-              <label>Supervisor *</label>
-              <input type="text" id="supervisor" required />
-            </div>
+                <!-- SECCIÓN 3: CONTENIDOS BRINDADOS -->
+                <div class="form-section">
+                    <h2 class="section-title">3. CONTENIDOS BRINDADOS</h2>
+                    <p style="margin-bottom: 15px; color: #666; font-size: 13px;">Seleccione los temas tratados durante la capacitación:</p>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label>Talla de Camisa *</label>
-                <select id="talla" required>
-                  <option value="">Selecciona una talla</option>
-                  <option value="XS">XS</option>
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                  <option value="XXL">XXL</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Fecha *</label>
-                <input type="date" id="fecha" required />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Reingreso a COMO *</label>
-              <div class="checkbox-group">
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="reingreso_como_si"
-                    name="reingreso_como"
-                    value="Si"
-                    required
-                  />
-                  <label for="reingreso_como_si">Si</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont1" name="contenidos" value="Políticas y dinámica de trabajo de la empresa">
+                            <label for="cont1">Políticas y dinámica de trabajo de la empresa</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont2" name="contenidos" value="Horarios de trabajo (Los horarios de entrada y salida pueden variar según consideraciones de supervisor y temporada)">
+                            <label for="cont2">Horarios de trabajo (Los horarios de entrada y salida pueden variar según consideraciones de supervisor y temporada)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont3" name="contenidos" value="Introducción al puesto de trabajo">
+                            <label for="cont3">Introducción al puesto de trabajo</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont4" name="contenidos" value="Información sobre acciones de personal">
+                            <label for="cont4">Información sobre acciones de personal</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont5" name="contenidos" value="Activación de simcard, y realización de portabilidad en bot y página web">
+                            <label for="cont5">Activación de simcard, y realización de portabilidad en bot y página web</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont6" name="contenidos" value="Registro de ventas en Aura e Icaro">
+                            <label for="cont6">Registro de ventas en Aura e Icaro</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont7" name="contenidos" value="Oferta comercial de paquetes, smartphones al crédito y contado en plataformas">
+                            <label for="cont7">Oferta comercial de paquetes, smartphones al crédito y contado en plataformas</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont8" name="contenidos" value="Política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar y COMO">
+                            <label for="cont8">Política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar y COMO</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont9" name="contenidos" value="Ejercicio en bot de telefónica para el ingreso de activaciones y portabilidad">
+                            <label for="cont9">Ejercicio en bot de telefónica para el ingreso de activaciones y portabilidad</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont10" name="contenidos" value="Que la plaza es 100% de campo y recomendaciones para ejercerlo">
+                            <label for="cont10">Que la plaza es 100% de campo y recomendaciones para ejercerlo</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cont11" name="contenidos" value="Las condiciones de comisiones actuales">
+                            <label for="cont11">Las condiciones de comisiones actuales</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="reingreso_como_no"
-                    name="reingreso_como"
-                    value="No"
-                  />
-                  <label for="reingreso_como_no">No</label>
+
+                <!-- SECCIÓN 4: CONFIRMACIÓN DE COMPRENSIÓN -->
+                <div class="form-section">
+                    <h2 class="section-title">4. POR LO QUE HAGO CONSTAR QUE:</h2>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp1" name="comprension" required>
+                            <label for="comp1">Comprendí la dinámica de trabajo, horarios y permisos laborales y sé cuáles son los procesos para seguir o en su defecto a quién dirigirme ante una situación que pueda enfrentar que imposibilite el cumplimiento de estos y los procesos o consecuencias de no seguir los criterios bajo la normativa del reglamento y políticas internas tanto del código de trabajo que la empresa implementará.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp2" name="comprension" required>
+                            <label for="comp2">Comprendí la dinámica de trabajo en campo y el manejo de los sistemas de activación, registro y facturación que utilizaré, comprometiéndome a ejercer mis funciones de ventas bajo los criterios y lineamiento de la empresa, también a usar los sistemas de manera adecuada bajo los criterios del empleador y a reportar de manera activa algún imprevisto o problema que sufra en los mismos con mi jefe inmediato o personal instruido para el apoyo de este.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp3" name="comprension" required>
+                            <label for="comp3">Fui instruido/a sobre la política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar a comercializar en mis actividades diarias y las consecuencias de estas malas prácticas.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp4" name="comprension" required>
+                            <label for="comp4">Comprendí la oferta comercial activa presentada por el capacitador y me comprometo a darle seguimiento y repaso a la oferta y las variantes que se puedan presentar por Movistar.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp5" name="comprension" required>
+                            <label for="comp5">Comprendí la responsabilidad que poseo al portar uniformes que representen la marca MOVISTAR EL SALVADOR comprometiéndome a hacer un buen uso de este durante horario laboral o fuera del mismo y comprendo las consecuencias por el mal uso de este.</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comp6" name="comprension" required>
+                            <label for="comp6">Comprendí y acepto las condiciones de pago de comisión proporcional durante 3 meses: Me doy por enterado que en caso de no cumplir la meta establecida para el canal y departamento correspondiente del KPI de SALDO Y ACTIVACIONES se me pagará el 15% del saldo inicial (Primer recarga) de las activaciones de calidad, y que este beneficio estará habilitado hasta tener ventas en N3 (los primeros 3 meses de relación laboral) para medición mientras SIGA LABORANDO PARA LA EMPRESA, sé que en el caso de renuncia o despido la medición se realizará según meta correspondiente del canal y departamento como vendedor antiguo anulando lo anteriormente establecido al principio de este punto.</label>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
 
-            <div class="form-group">
-              <label>Reingreso a la Marca *</label>
-              <div class="checkbox-group">
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="reingreso_marca_si"
-                    name="reingreso_marca"
-                    value="Si"
-                    required
-                  />
-                  <label for="reingreso_marca_si">Si</label>
+                <!-- SECCIÓN 5: TÉRMINOS Y CONDICIONES -->
+                <div class="form-section">
+                    <h2 class="section-title">5. ACEPTACIÓN Y TÉRMINOS</h2>
+
+                    <div class="info-box">
+                        <strong>TÉRMINOS Y CONDICIONES GENERALES</strong>
+                    </div>
+
+                    <div class="terminos-section">
+                        <h4>1. Naturaleza del documento:</h4>
+                        <p>Esta constancia no constituye un contrato laboral, ni genera derechos o compromisos adicionales a los establecidos por la ley o por el contrato individual de trabajo. Su finalidad es dejar constancia de la participación y comprensión de los temas abordados durante la capacitación de inducción.</p>
+
+                        <h4>2. Firma digital:</h4>
+                        <p>Al firmar electrónicamente este documento, el participante confirma su asistencia y comprensión de los contenidos descritos, así como su compromiso de aplicar lo aprendido en el desempeño de sus funciones. La firma digital o electrónica tiene la misma validez que una firma manuscrita para efectos de registro interno y cumplimiento de procesos de capacitación.</p>
+
+                        <h4>3. Resguardo y confidencialidad:</h4>
+                        <p>El documento será almacenado en formato digital dentro del sistema interno de la empresa y una copia será entregada al participante de forma virtual para su propio registro y respaldo. Esta constancia se utiliza como evidencia administrativa de participación y comprensión de los temas explicados durante la inducción, incluyendo condiciones operativas, dinámicas laborales y políticas internas de comisiones y desempeño. Su propósito es servir de respaldo en caso de requerirse una verificación interna o ante autoridades competentes sobre los contenidos abordados en la capacitación.</p>
+
+                        <h4>4. Actualización de contenidos:</h4>
+                        <p>La empresa podrá actualizar los temas de inducción o modificar procedimientos según necesidades operativas, legales o de seguridad. El colaborador se compromete a mantenerse informado de dichos cambios y participar en futuras capacitaciones cuando sean convocadas.</p>
+
+                        <h4>5. Aceptación:</h4>
+                        <p>Al firmar, el colaborador declara que leyó, comprendió y acepta el contenido del presente documento, así como las políticas, dinámicas y procedimientos explicados durante la capacitación.</p>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="acepta" required>
+                            <label for="acepta">Acepto los términos y condiciones descritos arriba</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="reingreso_marca_no"
-                    name="reingreso_marca"
-                    value="No"
-                  />
-                  <label for="reingreso_marca_no">No</label>
+
+                <!-- SECCIÓN 6: FIRMA DIGITAL -->
+                <div class="form-section">
+                    <h2 class="section-title">6. FIRMA DIGITAL</h2>
+                    <p style="margin-bottom: 15px; color: #666; font-size: 13px;">Por favor, firma en el espacio inferior. Usa tu mouse o dedo en dispositivos táctiles.</p>
+                    
+                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                    <div id="signatureStatus" class="signature-status status-pending">
+                        ✏️ Esperando firma...
+                    </div>
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="clearSignature()">🔄 Limpiar Firma</button>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <!-- SECCIÓN 2: INFORMACIÓN DE LA CAPACITACIÓN -->
-          <div class="form-section">
-            <h2 class="section-title">2. INFORMACIÓN DE LA CAPACITACIÓN</h2>
-
-            <div class="form-group">
-              <label>Tipo de Capacitación</label>
-              <input
-                type="text"
-                value="Capacitación de personal de nuevo ingreso del área de ventas"
-                readonly
-                style="background: #f5f5f5"
-              />
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>Fecha de Capacitación *</label>
-                <input type="date" id="fechaCapacitacion" required />
-              </div>
-              <div class="form-group">
-                <label>Duración *</label>
-                <select id="duracion" required>
-                  <option value="">Selecciona duración</option>
-                  <option value="Media jornada (1 día)">
-                    Media jornada (1 día)
-                  </option>
-                  <option value="Jornada completa (2 días o más)">
-                    Jornada completa (2 días o más)
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Instructor *</label>
-              <select id="instructor" required>
-                <option value="">Selecciona instructor</option>
-                <option value="Pedro Fernando Meléndez Ramírez">
-                  Pedro Fernando Meléndez Ramírez
-                </option>
-                <option value="Rodolfo Alberto Hernández Hernández">
-                  Rodolfo Alberto Hernández Hernández
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 3: CONTENIDOS BRINDADOS -->
-          <div class="form-section">
-            <h2 class="section-title">3. CONTENIDOS BRINDADOS</h2>
-            <p style="margin-bottom: 15px; color: #666; font-size: 13px">
-              Seleccione los temas tratados durante la capacitación:
-            </p>
-
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont1"
-                  name="contenidos"
-                  value="Políticas y dinámica de trabajo de la empresa"
-                />
-                <label for="cont1"
-                  >Políticas y dinámica de trabajo de la empresa</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont2"
-                  name="contenidos"
-                  value="Horarios de trabajo (Los horarios de entrada y salida pueden variar según consideraciones de supervisor y temporada)"
-                />
-                <label for="cont2"
-                  >Horarios de trabajo (Los horarios de entrada y salida pueden
-                  variar según consideraciones de supervisor y temporada)</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont3"
-                  name="contenidos"
-                  value="Introducción al puesto de trabajo"
-                />
-                <label for="cont3">Introducción al puesto de trabajo</label>
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont4"
-                  name="contenidos"
-                  value="Información sobre acciones de personal"
-                />
-                <label for="cont4"
-                  >Información sobre acciones de personal</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont5"
-                  name="contenidos"
-                  value="Activación de simcard, y realización de portabilidad en bot y página web"
-                />
-                <label for="cont5"
-                  >Activación de simcard, y realización de portabilidad en bot y
-                  página web</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont6"
-                  name="contenidos"
-                  value="Registro de ventas en Aura e Icaro"
-                />
-                <label for="cont6">Registro de ventas en Aura e Icaro</label>
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont7"
-                  name="contenidos"
-                  value="Oferta comercial de paquetes, smartphones al crédito y contado en plataformas"
-                />
-                <label for="cont7"
-                  >Oferta comercial de paquetes, smartphones al crédito y
-                  contado en plataformas</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont8"
-                  name="contenidos"
-                  value="Política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar y COMO"
-                />
-                <label for="cont8"
-                  >Política interna de la empresa sobre Fraude, usurpación de
-                  identidad y sobreprecios de los productos prepago de Movistar
-                  y COMO</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont9"
-                  name="contenidos"
-                  value="Ejercicio en bot de telefónica para el ingreso de activaciones y portabilidad"
-                />
-                <label for="cont9"
-                  >Ejercicio en bot de telefónica para el ingreso de
-                  activaciones y portabilidad</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont10"
-                  name="contenidos"
-                  value="Que la plaza es 100% de campo y recomendaciones para ejercerlo"
-                />
-                <label for="cont10"
-                  >Que la plaza es 100% de campo y recomendaciones para
-                  ejercerlo</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont11"
-                  name="contenidos"
-                  value="Las condiciones de comisiones actuales"
-                />
-                <label for="cont11"
-                  >Las condiciones de comisiones actuales</label
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 4: CONFIRMACIÓN DE COMPRENSIÓN -->
-          <div class="form-section">
-            <h2 class="section-title">4. POR LO QUE HAGO CONSTAR QUE:</h2>
-
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp1" name="comprension" required />
-                <label for="comp1"
-                  >Comprendí la dinámica de trabajo, horarios y permisos
-                  laborales y sé cuáles son los procesos para seguir o en su
-                  defecto a quién dirigirme ante una situación que pueda
-                  enfrentar que imposibilite el cumplimiento de estos y los
-                  procesos o consecuencias de no seguir los criterios bajo la
-                  normativa del reglamento y políticas internas tanto del código
-                  de trabajo que la empresa implementará.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp2" name="comprension" required />
-                <label for="comp2"
-                  >Comprendí la dinámica de trabajo en campo y el manejo de los
-                  sistemas de activación, registro y facturación que utilizaré,
-                  comprometiéndome a ejercer mis funciones de ventas bajo los
-                  criterios y lineamiento de la empresa, también a usar los
-                  sistemas de manera adecuada bajo los criterios del empleador y
-                  a reportar de manera activa algún imprevisto o problema que
-                  sufra en los mismos con mi jefe inmediato o personal instruido
-                  para el apoyo de este.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp3" name="comprension" required />
-                <label for="comp3"
-                  >Fui instruido/a sobre la política interna de la empresa sobre
-                  Fraude, usurpación de identidad y sobreprecios de los
-                  productos prepago de Movistar a comercializar en mis
-                  actividades diarias y las consecuencias de estas malas
-                  prácticas.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp4" name="comprension" required />
-                <label for="comp4"
-                  >Comprendí la oferta comercial activa presentada por el
-                  capacitador y me comprometo a darle seguimiento y repaso a la
-                  oferta y las variantes que se puedan presentar por
-                  Movistar.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp5" name="comprension" required />
-                <label for="comp5"
-                  >Comprendí la responsabilidad que poseo al portar uniformes
-                  que representen la marca MOVISTAR EL SALVADOR comprometiéndome
-                  a hacer un buen uso de este durante horario laboral o fuera
-                  del mismo y comprendo las consecuencias por el mal uso de
-                  este.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp6" name="comprension" required />
-                <label for="comp6"
-                  >Comprendí y acepto las condiciones de pago de comisión
-                  proporcional durante 3 meses: Me doy por enterado que en caso
-                  de no cumplir la meta establecida para el canal y departamento
-                  correspondiente del KPI de SALDO Y ACTIVACIONES se me pagará
-                  el 15% del saldo inicial (Primer recarga) de las activaciones
-                  de calidad, y que este beneficio estará habilitado hasta tener
-                  ventas en N3 (los primeros 3 meses de relación laboral) para
-                  medición mientras SIGA LABORANDO PARA LA EMPRESA, sé que en el
-                  caso de renuncia o despido la medición se realizará según meta
-                  correspondiente del canal y departamento como vendedor antiguo
-                  anulando lo anteriormente establecido al principio de este
-                  punto.</label
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 5: TÉRMINOS Y CONDICIONES -->
-          <div class="form-section">
-            <h2 class="section-title">5. ACEPTACIÓN Y TÉRMINOS</h2>
-
-            <div class="info-box">
-              <strong>TÉRMINOS Y CONDICIONES GENERALES</strong>
-            </div>
-
-            <div class="terminos-section">
-              <h4>1. Naturaleza del documento:</h4>
-              <p>
-                Esta constancia no constituye un contrato laboral, ni genera
-                derechos o compromisos adicionales a los establecidos por la ley
-                o por el contrato individual de trabajo. Su finalidad es dejar
-                constancia de la participación y comprensión de los temas
-                abordados durante la capacitación de inducción.
-              </p>
-
-              <h4>2. Firma digital:</h4>
-              <p>
-                Al firmar electrónicamente este documento, el participante
-                confirma su asistencia y comprensión de los contenidos
-                descritos, así como su compromiso de aplicar lo aprendido en el
-                desempeño de sus funciones. La firma digital o electrónica tiene
-                la misma validez que una firma manuscrita para efectos de
-                registro interno y cumplimiento de procesos de capacitación.
-              </p>
-
-              <h4>3. Resguardo y confidencialidad:</h4>
-              <p>
-                El documento será almacenado en formato digital dentro del
-                sistema interno de la empresa y una copia será entregada al
-                participante de forma virtual para su propio registro y
-                respaldo. Esta constancia se utiliza como evidencia
-                administrativa de participación y comprensión de los temas
-                explicados durante la inducción, incluyendo condiciones
-                operativas, dinámicas laborales y políticas internas de
-                comisiones y desempeño. Su propósito es servir de respaldo en
-                caso de requerirse una verificación interna o ante autoridades
-                competentes sobre los contenidos abordados en la capacitación.
-              </p>
-
-              <h4>4. Actualización de contenidos:</h4>
-              <p>
-                La empresa podrá actualizar los temas de inducción o modificar
-                procedimientos según necesidades operativas, legales o de
-                seguridad. El colaborador se compromete a mantenerse informado
-                de dichos cambios y participar en futuras capacitaciones cuando
-                sean convocadas.
-              </p>
-
-              <h4>5. Aceptación:</h4>
-              <p>
-                Al firmar, el colaborador declara que leyó, comprendió y acepta
-                el contenido del presente documento, así como las políticas,
-                dinámicas y procedimientos explicados durante la capacitación.
-              </p>
-            </div>
-
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <input type="checkbox" id="acepta" required />
-                <label for="acepta"
-                  >Acepto los términos y condiciones descritos arriba</label
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 6: FIRMA DIGITAL -->
-          <div class="form-section">
-            <h2 class="section-title">6. FIRMA DIGITAL</h2>
-            <p style="margin-bottom: 15px; color: #666; font-size: 13px">
-              Por favor, firma en el espacio inferior. Usa tu mouse o dedo en
-              dispositivos táctiles.
-            </p>
-
-            <canvas id="signatureCanvas" class="signature-canvas"></canvas>
-            <div id="signatureStatus" class="signature-status status-pending">
-              ✏️ Esperando firma...
-            </div>
-            <div class="buttons">
-              <button
-                type="button"
-                class="btn-secondary"
-                onclick="clearSignature()"
-              >
-                🔄 Limpiar Firma
-              </button>
-            </div>
-          </div>
-
-          <!-- BOTONES FINALES -->
-          <div class="form-section" style="border-bottom: none">
-            <div class="buttons">
-              <button
-                type="button"
-                class="btn-secondary"
-                onclick="limpiarFormulario()"
-              >
-                Limpiar Formulario
-              </button>
-              <button type="submit" class="btn-primary">
-                ✓ Generar PDF de Conformidad
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
+                <!-- BOTONES FINALES -->
+                <div class="form-section" style="border-bottom: none;">
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="limpiarFormulario()">Limpiar Formulario</button>
+                        <button type="submit" class="btn-primary">✓ Generar PDF de Conformidad</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
-      // 🔷 CONFIGURACIÓN DEL LOGO
-      // Cambia esta URL por tu logo
-      const LOGO_URL = "/logo_como.webp"; // Reemplaza con tu URL de logo
-
-      // Para convertir a base64 (opcional)
-      let logoImageData = null;
-
-      // Función para cargar logo desde URL
-      async function cargarLogoDesdeURL(url) {
-        try {
-          const response = await fetch(url);
-          const blob = await response.blob();
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            logoImageData = e.target.result;
-            document.getElementById("logoFormulario").src = url;
-          };
-          reader.readAsDataURL(blob);
-        } catch (error) {
-          console.log("No se pudo cargar el logo desde URL");
-        }
-      }
-
-      // Cargar logo al iniciar
-      window.addEventListener("load", function () {
-        document.getElementById("logoFormulario").src = LOGO_URL;
-        cargarLogoDesdeURL(LOGO_URL);
-      });
-
-      const canvas = document.getElementById("signatureCanvas");
-      const ctx = canvas.getContext("2d");
-      let isDrawing = false;
-      let hasSignature = false;
-
-      function resizeCanvas() {
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width - 4;
-        canvas.height = 150;
-      }
-
-      resizeCanvas();
-      window.addEventListener("resize", resizeCanvas);
-
-      canvas.addEventListener("mousedown", startDrawing);
-      canvas.addEventListener("mousemove", draw);
-      canvas.addEventListener("mouseup", stopDrawing);
-      canvas.addEventListener("touchstart", handleTouch, false);
-      canvas.addEventListener("touchmove", handleTouch, false);
-      canvas.addEventListener("touchend", stopDrawing);
-
-      function startDrawing(e) {
-        if (e.button !== 0) return;
-        isDrawing = true;
-        hasSignature = true;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        updateStatus();
-      }
-
-      function draw(e) {
-        if (!isDrawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.strokeStyle = "#0d47a1";
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
-
-      function handleTouch(e) {
-        e.preventDefault();
-        if (e.type === "touchstart") {
-          isDrawing = true;
-          hasSignature = true;
-        }
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
-        const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
-
-        if (e.type === "touchstart") {
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-        } else if (e.type === "touchmove") {
-          ctx.lineWidth = 2;
-          ctx.lineCap = "round";
-          ctx.lineJoin = "round";
-          ctx.strokeStyle = "#0d47a1";
-          ctx.lineTo(x, y);
-          ctx.stroke();
-        }
-        updateStatus();
-      }
-
-      function stopDrawing() {
-        isDrawing = false;
-      }
-
-      function updateStatus() {
-        const status = document.getElementById("signatureStatus");
-        if (hasSignature) {
-          status.classList.remove("status-pending");
-          status.classList.add("status-completed");
-          status.innerHTML = "✓ Firma completada";
-        }
-      }
-
-      function clearSignature() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        hasSignature = false;
-        const status = document.getElementById("signatureStatus");
-        status.classList.add("status-pending");
-        status.classList.remove("status-completed");
-        status.innerHTML = "✏️ Esperando firma...";
-      }
-
-      function limpiarFormulario() {
-        document.getElementById("mainForm").reset();
-        clearSignature();
-        document.getElementById("fecha").valueAsDate = new Date();
-      }
-
-      document.getElementById("fecha").valueAsDate = new Date();
-
-      function getContenidosSeleccionados() {
-        const checkboxes = document.querySelectorAll(
-          'input[name="contenidos"]:checked'
-        );
-        return Array.from(checkboxes).map((cb) => cb.value);
-      }
-
-      // Función para mostrar toast
-      function showToast(message, type = "success") {
-        const toast = document.getElementById("toast");
-        toast.textContent = message;
-        toast.className = "toast show " + type;
-
-        setTimeout(() => {
-          toast.classList.remove("show");
-        }, 4000);
-      }
-
-      document
-        .getElementById("mainForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-
-          if (!hasSignature) {
-            showToast(
-              "❌ Por favor, firma el documento antes de continuar",
-              "error"
-            );
-            return;
-          }
-
-          const comprensiones = document.querySelectorAll(
-            'input[name="comprension"]:checked'
-          ).length;
-          if (comprensiones < 6) {
-            showToast(
-              "⚠️ Por favor, marca todas las casillas de comprensión",
-              "warning"
-            );
-            return;
-          }
-
-          // Mostrar loading
-          document.getElementById("loading").classList.add("show");
-          document.getElementById("overlay").classList.add("show");
-
-          setTimeout(() => {
+        // 🔷 CONFIGURACIÓN DEL LOGO
+        // Para GitHub Pages - reemplaza con tu usuario y repositorio
+        const LOGO_URL = 'https://raw.githubusercontent.com/kevinMejia6/Firmador_Contrato/main/logo_como.webp';
+        
+        let logoImageData = null;
+        
+        // Función para cargar logo desde URL
+        async function cargarLogoDesdeURL(url) {
             try {
-              generarPDF();
-              showToast("✓ PDF generado exitosamente", "success");
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoImageData = e.target.result;
+                    // Mostrar en formulario
+                    document.getElementById('logoFormulario').src = logoImageData;
+                    console.log('✓ Logo cargado correctamente');
+                };
+                reader.readAsDataURL(blob);
             } catch (error) {
-              showToast("❌ Error al generar PDF", "error");
-              console.error(error);
-            } finally {
-              // Ocultar loading
-              document.getElementById("loading").classList.remove("show");
-              document.getElementById("overlay").classList.remove("show");
-              limpiarFormulario();
+                console.log('⚠️ No se pudo cargar el logo desde:', url);
+                // Si falla, mostrar la imagen directamente sin conversión
+                document.getElementById('logoFormulario').src = url;
             }
-          }, 1200);
+        }
+        
+        // Cargar logo al iniciar
+        window.addEventListener('load', function() {
+            cargarLogoDesdeURL(LOGO_URL);
         });
 
-      function generarPDF() {
-        const { jsPDF } = window.jspdf;
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let hasSignature = false;
 
-        const nombre = document.getElementById("nombre").value;
-        const telefono = document.getElementById("telefono").value;
-        const email = document.getElementById("email").value;
-        const dui = document.getElementById("dui").value;
-        const canal = document.querySelector(
-          'input[name="canal"]:checked'
-        ).value;
-        const supervisor = document.getElementById("supervisor").value;
-        const talla = document.getElementById("talla").value;
-        const fecha = document.getElementById("fecha").value;
-        const reingresoComo = document.querySelector(
-          'input[name="reingreso_como"]:checked'
-        ).value;
-        const reingresoMarca = document.querySelector(
-          'input[name="reingreso_marca"]:checked'
-        ).value;
-        const fechaCapacitacion =
-          document.getElementById("fechaCapacitacion").value;
-        const duracion = document.getElementById("duracion").value;
-        const instructor = document.getElementById("instructor").value;
-        const contenidos = getContenidosSeleccionados();
-        const signatureImage = canvas.toDataURL("image/png");
-        const fechaActual = new Date().toLocaleDateString("es-ES");
-
-        const doc = new jsPDF("p", "mm", "a4");
-        const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
-        const pageHeight = doc.internal.pageSize.getHeight(); // 297mm
-        const margin = 12; // Márgenes más pequeños
-        let y = 35; // Aumentado de 30 a 35
-
-        // 🔷 Encabezado institucional
-        function header() {
-          doc.setFillColor(0, 51, 102);
-          doc.rect(0, 0, pageWidth, 28, "F");
-
-          // Agregar logo si existe
-          if (logoImageData) {
-            doc.addImage(logoImageData, "PNG", 10, 3, 20, 22);
-          }
-
-          doc.setTextColor(255, 255, 255);
-          doc.setFont("times", "bold");
-          doc.setFontSize(11);
-          doc.text(
-            "DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN",
-            pageWidth / 2,
-            8,
-            { align: "center" }
-          );
-          doc.setFontSize(8);
-          doc.setFont("times", "normal");
-          doc.text(
-            "Capacitación de Personal de Nuevo Ingreso – Área de Ventas",
-            pageWidth / 2,
-            14,
-            { align: "center" }
-          );
-          doc.setFontSize(7);
-          doc.setFont("times", "bold");
-          doc.text(
-            "COMERCIALIZACIÓN EN MOVIMIENTO S.A. DE C.V.",
-            pageWidth / 2,
-            20,
-            { align: "center" }
-          );
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width - 4;
+            canvas.height = 150;
         }
 
-        // 🔷 Pie de página
-        function footer() {
-          doc.setDrawColor(150);
-          doc.setLineWidth(0.3);
-          doc.line(
-            margin,
-            pageHeight - 10,
-            pageWidth - margin,
-            pageHeight - 10
-          );
-          doc.setFontSize(6.5);
-          doc.setTextColor(100);
-          doc.text(
-            "Documento emitido por Comercialización en Movimiento S.A. de C.V. | Confidencial - Uso Interno",
-            pageWidth / 2,
-            pageHeight - 6,
-            { align: "center" }
-          );
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchstart', handleTouch, false);
+        canvas.addEventListener('touchmove', handleTouch, false);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            if (e.button !== 0) return;
+            isDrawing = true;
+            hasSignature = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            updateStatus();
         }
 
-        function newPage() {
-          doc.addPage();
-          header();
-          footer();
-          y = 35; // Aumentado de 32 a 35
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#0d47a1';
+            ctx.lineTo(x, y);
+            ctx.stroke();
         }
 
-        function checkSpace(extra = 12) {
-          if (y + extra > pageHeight - 15) newPage();
+        function handleTouch(e) {
+            e.preventDefault();
+            if (e.type === 'touchstart') {
+                isDrawing = true;
+                hasSignature = true;
+            }
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+            
+            if (e.type === 'touchstart') {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            } else if (e.type === 'touchmove') {
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#0d47a1';
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+            updateStatus();
         }
 
-        // 🔷 Texto con ancho máximo controlado
-        function addParagraph(text, lineHeight = 4, fontSize = 9) {
-          const maxWidth = pageWidth - 2 * margin - 2;
-          const lines = doc.splitTextToSize(text, maxWidth);
-          doc.setFontSize(fontSize);
-          lines.forEach((line) => {
-            checkSpace(lineHeight);
-            doc.text(line, margin + 1, y);
-            y += lineHeight;
-          });
-          y += 0.5;
+        function stopDrawing() {
+            isDrawing = false;
         }
 
-        header();
-        footer();
+        function updateStatus() {
+            const status = document.getElementById('signatureStatus');
+            if (hasSignature) {
+                status.classList.remove('status-pending');
+                status.classList.add('status-completed');
+                status.innerHTML = '✓ Firma completada';
+            }
+        }
 
-        // 🔹 1. Datos del participante
-        doc.setFont("times", "bold");
-        doc.setTextColor(0, 51, 102);
-        doc.setFontSize(10);
-        doc.text("1. DATOS DEL PARTICIPANTE", margin, y);
-        y += 4.5;
-        doc.setDrawColor(0, 51, 102);
-        doc.setLineWidth(0.35);
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 5;
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+            const status = document.getElementById('signatureStatus');
+            status.classList.add('status-pending');
+            status.classList.remove('status-completed');
+            status.innerHTML = '✏️ Esperando firma...';
+        }
 
-        doc.setFont("times", "normal");
-        doc.setTextColor(0);
-        addParagraph(`Nombre Completo: ${nombre}`, 3.8, 9);
-        addParagraph(`DUI: ${dui}`, 3.8, 9);
-        addParagraph(`Teléfono: ${telefono}`, 3.8, 9);
-        addParagraph(`Correo Electrónico: ${email}`, 3.8, 9);
-        addParagraph(`Canal: ${canal}`, 3.8, 9);
-        addParagraph(`Supervisor: ${supervisor}`, 3.8, 9);
-        addParagraph(`Talla de Camisa: ${talla}`, 3.8, 9);
-        addParagraph(`Fecha: ${fecha}`, 3.8, 9);
-        addParagraph(`Reingreso a COMO: ${reingresoComo}`, 3.8, 9);
-        addParagraph(`Reingreso a la Marca: ${reingresoMarca}`, 3.8, 9);
-        y += 2;
+        function limpiarFormulario() {
+            document.getElementById('mainForm').reset();
+            clearSignature();
+            document.getElementById('fecha').valueAsDate = new Date();
+        }
 
-        // 🔹 2. Información de la Capacitación
-        doc.setFont("times", "bold");
-        doc.setTextColor(0, 51, 102);
-        doc.setFontSize(10);
-        doc.text("2. INFORMACIÓN DE LA CAPACITACIÓN", margin, y);
-        y += 4.5;
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 5;
+        document.getElementById('fecha').valueAsDate = new Date();
 
-        doc.setFont("times", "normal");
-        doc.setTextColor(0);
-        addParagraph(`Fecha de Capacitación: ${fechaCapacitacion}`, 3.8, 9);
-        addParagraph(`Duración: ${duracion}`, 3.8, 9);
-        addParagraph(`Instructor: ${instructor}`, 3.8, 9);
-        y += 2;
+        function getContenidosSeleccionados() {
+            const checkboxes = document.querySelectorAll('input[name="contenidos"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
 
-        // 🔹 3. Contenidos brindados
-        checkSpace();
-        doc.setFont("times", "bold");
-        doc.setTextColor(0, 51, 102);
-        doc.setFontSize(10);
-        doc.text("3. CONTENIDOS BRINDADOS", margin, y);
-        y += 4.5;
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 5;
+        // Función para mostrar toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
 
-        doc.setFont("times", "normal");
-        doc.setTextColor(0);
-        contenidos.forEach((c, i) => {
-          addParagraph(`${i + 1}. ${c}`, 3.8, 8.5);
-        });
-        y += 1.5;
+        document.getElementById('mainForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-        // 🔹 4. Declaraciones
-        checkSpace();
-        doc.setFont("times", "bold");
-        doc.setTextColor(0, 51, 102);
-        doc.setFontSize(10);
-        doc.text("4. POR LO QUE HAGO CONSTAR QUE:", margin, y);
-        y += 4.5;
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 5;
+            if (!hasSignature) {
+                showToast('❌ Por favor, firma el documento antes de continuar', 'error');
+                return;
+            }
 
-        doc.setFont("times", "normal");
-        doc.setTextColor(0);
-        const declaraciones = [
-          "Comprendí la dinámica de trabajo, horarios y permisos laborales y sé cuáles son los procesos para seguir o en su defecto a quién dirigirme ante una situación que pueda enfrentar que imposibilite el cumplimiento de estos y los procesos o consecuencias de no seguir los criterios bajo la normativa del reglamento y políticas internas tanto del código de trabajo que la empresa implementará.",
-          "Comprendí la dinámica de trabajo en campo y el manejo de los sistemas de activación, registro y facturación que utilizaré, comprometiéndome a ejercer mis funciones de ventas bajo los criterios y lineamiento de la empresa, también a usar los sistemas de manera adecuada bajo los criterios del empleador y a reportar de manera activa algún imprevisto o problema que sufra en los mismos con mi jefe inmediato o personal instruido para el apoyo de este.",
-          "Fui instruido/a sobre la política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar a comercializar en mis actividades diarias y las consecuencias de estas malas prácticas.",
-          "Comprendí la oferta comercial activa presentada por el capacitador y me comprometo a darle seguimiento y repaso a la oferta y las variantes que se puedan presentar por Movistar.",
-          "Comprendí la responsabilidad que poseo al portar uniformes que representen la marca MOVISTAR EL SALVADOR comprometiéndome a hacer un buen uso de este durante horario laboral o fuera del mismo y comprendo las consecuencias por el mal uso de este.",
-          "Comprendí y acepto las condiciones de pago de comisión proporcional durante 3 meses: Me doy por enterado que en caso de no cumplir la meta establecida para el canal y departamento correspondiente del KPI de SALDO Y ACTIVACIONES se me pagará el 15% del saldo inicial (Primer recarga) de las activaciones de calidad, y que este beneficio estará habilitado hasta tener ventas en N3 (los primeros 3 meses de relación laboral) para medición mientras SIGA LABORANDO PARA LA EMPRESA, sé que en el caso de renuncia o despido la medición se realizará según meta correspondiente del canal y departamento como vendedor antiguo anulando lo anteriormente establecido al principio de este punto.",
-        ];
-        declaraciones.forEach((t, i) => {
-          addParagraph(`${i + 1}. ${t}`, 4.2, 8.5);
+            const comprensiones = document.querySelectorAll('input[name="comprension"]:checked').length;
+            if (comprensiones < 6) {
+                showToast('⚠️ Por favor, marca todas las casillas de comprensión', 'warning');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+
+            setTimeout(() => {
+                try {
+                    generarPDF();
+                    showToast('✓ PDF generado exitosamente', 'success');
+                } catch (error) {
+                    showToast('❌ Error al generar PDF', 'error');
+                    console.error(error);
+                } finally {
+                    // Ocultar loading
+                    document.getElementById('loading').classList.remove('show');
+                    document.getElementById('overlay').classList.remove('show');
+                    limpiarFormulario();
+                }
+            }, 1200);
         });
 
-        // 🔹 5. Términos y Condiciones
-        newPage();
-        doc.setFont("times", "bold");
-        doc.setTextColor(0, 51, 102);
-        doc.setFontSize(10);
-        doc.text("5. TÉRMINOS Y CONDICIONES GENERALES", margin, y);
-        y += 4.5;
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 5;
+        function generarPDF() {
+            const { jsPDF } = window.jspdf;
 
-        const terminos = [
-          {
-            titulo: "1. Naturaleza del documento:",
-            texto:
-              "Esta constancia no constituye un contrato laboral ni genera derechos adicionales. Su finalidad es dejar constancia de la participación y comprensión de los temas abordados durante la capacitación de inducción.",
-          },
-          {
-            titulo: "2. Firma digital:",
-            texto:
-              "La firma electrónica aquí plasmada tiene validez legal equivalente a una firma manuscrita, confirmando la asistencia y comprensión del participante.",
-          },
-          {
-            titulo: "3. Resguardo y confidencialidad:",
-            texto:
-              "El documento será almacenado digitalmente y protegido conforme a las políticas de confidencialidad de Comercialización en Movimiento S.A. de C.V., siendo de uso exclusivo interno.",
-          },
-          {
-            titulo: "4. Actualización de contenidos:",
-            texto:
-              "La empresa podrá modificar los contenidos o procedimientos según las necesidades operativas o normativas, comprometiéndose el colaborador a mantenerse informado.",
-          },
-          {
-            titulo: "5. Aceptación:",
-            texto:
-              "El firmante declara haber leído, comprendido y aceptado todos los términos y políticas establecidas en la presente conformidad.",
-          },
-        ];
+            const nombre = document.getElementById('nombre').value;
+            const telefono = document.getElementById('telefono').value;
+            const email = document.getElementById('email').value;
+            const dui = document.getElementById('dui').value;
+            const canal = document.querySelector('input[name="canal"]:checked').value;
+            const supervisor = document.getElementById('supervisor').value;
+            const talla = document.getElementById('talla').value;
+            const fecha = document.getElementById('fecha').value;
+            const reingresoComo = document.querySelector('input[name="reingreso_como"]:checked').value;
+            const reingresoMarca = document.querySelector('input[name="reingreso_marca"]:checked').value;
+            const fechaCapacitacion = document.getElementById('fechaCapacitacion').value;
+            const duracion = document.getElementById('duracion').value;
+            const instructor = document.getElementById('instructor').value;
+            const contenidos = getContenidosSeleccionados();
+            const signatureImage = canvas.toDataURL('image/png');
+            const fechaActual = new Date().toLocaleDateString('es-ES');
 
-        doc.setFont("times", "normal");
-        doc.setTextColor(0);
-        terminos.forEach((t) => {
-          checkSpace(10);
-          doc.setFont("times", "bold");
-          doc.setFontSize(8.5);
-          doc.text(t.titulo, margin + 1, y);
-          y += 3.5;
-          doc.setFont("times", "normal");
-          addParagraph(t.texto, 3.8, 8.5);
-        });
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
+            const pageHeight = doc.internal.pageSize.getHeight(); // 297mm
+            const margin = 12; // Márgenes más pequeños
+            let y = 35; // Aumentado de 30 a 35
 
-        // 🔹 6. Firma
-        newPage();
-        doc.setFont("times", "bold");
-        doc.setTextColor(0, 51, 102);
-        doc.setFontSize(10);
-        doc.text("6. FIRMA DIGITAL", margin, y);
-        y += 4.5;
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 8;
+            // 🔷 Encabezado institucional
+            function header() {
+                doc.setFillColor(0, 51, 102);
+                doc.rect(0, 0, pageWidth, 28, 'F');
+                
+                // Agregar logo si existe
+                if (logoImageData) {
+                    try {
+                        // Detectar formato de imagen
+                        let imageFormat = 'PNG'; // Por defecto
+                        if (logoImageData.includes('image/jpeg') || logoImageData.includes('image/jpg')) {
+                            imageFormat = 'JPEG';
+                        } else if (logoImageData.includes('image/webp')) {
+                            imageFormat = 'WEBP';
+                        } else if (logoImageData.includes('image/gif')) {
+                            imageFormat = 'GIF';
+                        }
+                        
+                        doc.addImage(logoImageData, imageFormat, 10, 3, 20, 22);
+                    } catch (error) {
+                        console.log('Error al agregar logo al PDF:', error);
+                        // Si falla, intenta con PNG
+                        try {
+                            doc.addImage(logoImageData, 'PNG', 10, 3, 20, 22);
+                        } catch (e) {
+                            console.log('No se pudo agregar el logo al PDF');
+                        }
+                    }
+                }
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFont('times', 'bold');
+                doc.setFontSize(11);
+                doc.text('DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN', pageWidth / 2, 8, { align: 'center' });
+                doc.setFontSize(8);
+                doc.setFont('times', 'normal');
+                doc.text('Capacitación de Personal de Nuevo Ingreso – Área de Ventas', pageWidth / 2, 14, { align: 'center' });
+                doc.setFontSize(7);
+                doc.setFont('times', 'bold');
+                doc.text('COMERCIALIZACIÓN EN MOVIMIENTO S.A. DE C.V.', pageWidth / 2, 20, { align: 'center' });
+            }
 
-        // Agregar imagen de firma
-        if (signatureImage && signatureImage !== "data:image/png;base64,") {
-          const sigWidth = pageWidth - 2 * margin - 4;
-          const sigHeight = 30;
-          doc.addImage(
-            signatureImage,
-            "PNG",
-            margin + 2,
-            y,
-            sigWidth,
-            sigHeight
-          );
-          y += sigHeight + 5;
+            // 🔷 Pie de página
+            function footer() {
+                doc.setDrawColor(150);
+                doc.setLineWidth(0.3);
+                doc.line(margin, pageHeight - 10, pageWidth - margin, pageHeight - 10);
+                doc.setFontSize(6.5);
+                doc.setTextColor(100);
+                doc.text('Documento emitido por Comercialización en Movimiento S.A. de C.V. | Confidencial - Uso Interno', pageWidth / 2, pageHeight - 6, { align: 'center' });
+            }
+
+            function newPage() {
+                doc.addPage();
+                header();
+                footer();
+                y = 35; // Aumentado de 32 a 35
+            }
+
+            function checkSpace(extra = 12) {
+                if (y + extra > pageHeight - 15) newPage();
+            }
+
+            // 🔷 Texto con ancho máximo controlado
+            function addParagraph(text, lineHeight = 4, fontSize = 9) {
+                const maxWidth = pageWidth - 2 * margin - 2;
+                const lines = doc.splitTextToSize(text, maxWidth);
+                doc.setFontSize(fontSize);
+                lines.forEach(line => {
+                    checkSpace(lineHeight);
+                    doc.text(line, margin + 1, y);
+                    y += lineHeight;
+                });
+                y += 0.5;
+            }
+
+            header();
+            footer();
+
+            // 🔹 1. Datos del participante
+            doc.setFont('times', 'bold');
+            doc.setTextColor(0, 51, 102);
+            doc.setFontSize(10);
+            doc.text('1. DATOS DEL PARTICIPANTE', margin, y);
+            y += 4.5;
+            doc.setDrawColor(0, 51, 102);
+            doc.setLineWidth(0.35);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 5;
+
+            doc.setFont('times', 'normal');
+            doc.setTextColor(0);
+            addParagraph(`Nombre Completo: ${nombre}`, 3.8, 9);
+            addParagraph(`DUI: ${dui}`, 3.8, 9);
+            addParagraph(`Teléfono: ${telefono}`, 3.8, 9);
+            addParagraph(`Correo Electrónico: ${email}`, 3.8, 9);
+            addParagraph(`Canal: ${canal}`, 3.8, 9);
+            addParagraph(`Supervisor: ${supervisor}`, 3.8, 9);
+            addParagraph(`Talla de Camisa: ${talla}`, 3.8, 9);
+            addParagraph(`Fecha: ${fecha}`, 3.8, 9);
+            addParagraph(`Reingreso a COMO: ${reingresoComo}`, 3.8, 9);
+            addParagraph(`Reingreso a la Marca: ${reingresoMarca}`, 3.8, 9);
+            y += 2;
+
+            // 🔹 2. Información de la Capacitación
+            doc.setFont('times', 'bold');
+            doc.setTextColor(0, 51, 102);
+            doc.setFontSize(10);
+            doc.text('2. INFORMACIÓN DE LA CAPACITACIÓN', margin, y);
+            y += 4.5;
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 5;
+
+            doc.setFont('times', 'normal');
+            doc.setTextColor(0);
+            addParagraph(`Fecha de Capacitación: ${fechaCapacitacion}`, 3.8, 9);
+            addParagraph(`Duración: ${duracion}`, 3.8, 9);
+            addParagraph(`Instructor: ${instructor}`, 3.8, 9);
+            y += 2;
+
+            // 🔹 3. Contenidos brindados
+            checkSpace();
+            doc.setFont('times', 'bold');
+            doc.setTextColor(0, 51, 102);
+            doc.setFontSize(10);
+            doc.text('3. CONTENIDOS BRINDADOS', margin, y);
+            y += 4.5;
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 5;
+
+            doc.setFont('times', 'normal');
+            doc.setTextColor(0);
+            contenidos.forEach((c, i) => {
+                addParagraph(`${i + 1}. ${c}`, 3.8, 8.5);
+            });
+            y += 1.5;
+
+            // 🔹 4. Declaraciones
+            checkSpace();
+            doc.setFont('times', 'bold');
+            doc.setTextColor(0, 51, 102);
+            doc.setFontSize(10);
+            doc.text('4. POR LO QUE HAGO CONSTAR QUE:', margin, y);
+            y += 4.5;
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 5;
+
+            doc.setFont('times', 'normal');
+            doc.setTextColor(0);
+            const declaraciones = [
+                'Comprendí la dinámica de trabajo, horarios y permisos laborales y sé cuáles son los procesos para seguir o en su defecto a quién dirigirme ante una situación que pueda enfrentar que imposibilite el cumplimiento de estos y los procesos o consecuencias de no seguir los criterios bajo la normativa del reglamento y políticas internas tanto del código de trabajo que la empresa implementará.',
+                'Comprendí la dinámica de trabajo en campo y el manejo de los sistemas de activación, registro y facturación que utilizaré, comprometiéndome a ejercer mis funciones de ventas bajo los criterios y lineamiento de la empresa, también a usar los sistemas de manera adecuada bajo los criterios del empleador y a reportar de manera activa algún imprevisto o problema que sufra en los mismos con mi jefe inmediato o personal instruido para el apoyo de este.',
+                'Fui instruido/a sobre la política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar a comercializar en mis actividades diarias y las consecuencias de estas malas prácticas.',
+                'Comprendí la oferta comercial activa presentada por el capacitador y me comprometo a darle seguimiento y repaso a la oferta y las variantes que se puedan presentar por Movistar.',
+                'Comprendí la responsabilidad que poseo al portar uniformes que representen la marca MOVISTAR EL SALVADOR comprometiéndome a hacer un buen uso de este durante horario laboral o fuera del mismo y comprendo las consecuencias por el mal uso de este.',
+                'Comprendí y acepto las condiciones de pago de comisión proporcional durante 3 meses: Me doy por enterado que en caso de no cumplir la meta establecida para el canal y departamento correspondiente del KPI de SALDO Y ACTIVACIONES se me pagará el 15% del saldo inicial (Primer recarga) de las activaciones de calidad, y que este beneficio estará habilitado hasta tener ventas en N3 (los primeros 3 meses de relación laboral) para medición mientras SIGA LABORANDO PARA LA EMPRESA, sé que en el caso de renuncia o despido la medición se realizará según meta correspondiente del canal y departamento como vendedor antiguo anulando lo anteriormente establecido al principio de este punto.'
+            ];
+            declaraciones.forEach((t, i) => {
+                addParagraph(`${i + 1}. ${t}`, 4.2, 8.5);
+            });
+
+            // 🔹 5. Términos y Condiciones
+            newPage();
+            doc.setFont('times', 'bold');
+            doc.setTextColor(0, 51, 102);
+            doc.setFontSize(10);
+            doc.text('5. TÉRMINOS Y CONDICIONES GENERALES', margin, y);
+            y += 4.5;
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 5;
+
+            const terminos = [
+                {
+                    titulo: '1. Naturaleza del documento:',
+                    texto: 'Esta constancia no constituye un contrato laboral ni genera derechos adicionales. Su finalidad es dejar constancia de la participación y comprensión de los temas abordados durante la capacitación de inducción.'
+                },
+                {
+                    titulo: '2. Firma digital:',
+                    texto: 'La firma electrónica aquí plasmada tiene validez legal equivalente a una firma manuscrita, confirmando la asistencia y comprensión del participante.'
+                },
+                {
+                    titulo: '3. Resguardo y confidencialidad:',
+                    texto: 'El documento será almacenado digitalmente y protegido conforme a las políticas de confidencialidad de Comercialización en Movimiento S.A. de C.V., siendo de uso exclusivo interno.'
+                },
+                {
+                    titulo: '4. Actualización de contenidos:',
+                    texto: 'La empresa podrá modificar los contenidos o procedimientos según las necesidades operativas o normativas, comprometiéndose el colaborador a mantenerse informado.'
+                },
+                {
+                    titulo: '5. Aceptación:',
+                    texto: 'El firmante declara haber leído, comprendido y aceptado todos los términos y políticas establecidas en la presente conformidad.'
+                }
+            ];
+
+            doc.setFont('times', 'normal');
+            doc.setTextColor(0);
+            terminos.forEach(t => {
+                checkSpace(10);
+                doc.setFont('times', 'bold');
+                doc.setFontSize(8.5);
+                doc.text(t.titulo, margin + 1, y);
+                y += 3.5;
+                doc.setFont('times', 'normal');
+                addParagraph(t.texto, 3.8, 8.5);
+            });
+
+            // 🔹 6. Firma
+            newPage();
+            doc.setFont('times', 'bold');
+            doc.setTextColor(0, 51, 102);
+            doc.setFontSize(10);
+            doc.text('6. FIRMA DIGITAL', margin, y);
+            y += 4.5;
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 8;
+
+            // Agregar imagen de firma
+            if (signatureImage && signatureImage !== 'data:image/png;base64,') {
+                const sigWidth = pageWidth - 2 * margin - 4;
+                const sigHeight = 30;
+                doc.addImage(signatureImage, 'PNG', margin + 2, y, sigWidth, sigHeight);
+                y += sigHeight + 5;
+            }
+
+            doc.setFont('times', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(0);
+            doc.text(`Nombre: ${nombre}`, margin + 1, y);
+            y += 4;
+            doc.text(`DUI: ${dui}`, margin + 1, y);
+            y += 4;
+            doc.text(`Fecha de firma: ${fechaActual}`, margin + 1, y);
+
+            // ✅ Guardar archivo
+            const filename = `Conformidad_${nombre.replace(/\s+/g, '_')}_${dui}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(filename);
         }
-
-        doc.setFont("times", "normal");
-        doc.setFontSize(9);
-        doc.setTextColor(0);
-        doc.text(`Nombre: ${nombre}`, margin + 1, y);
-        y += 4;
-        doc.text(`DUI: ${dui}`, margin + 1, y);
-        y += 4;
-        doc.text(`Fecha de firma: ${fechaActual}`, margin + 1, y);
-
-        // ✅ Guardar archivo
-        const filename = `Conformidad_${nombre.replace(/\s+/g, "_")}_${dui}_${
-          new Date().toISOString().split("T")[0]
-        }.pdf`;
-        doc.save(filename);
-      }
     </script>
-  </body>
+</body>
 </html>
