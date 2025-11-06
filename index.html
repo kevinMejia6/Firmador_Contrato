@@ -592,12 +592,13 @@
   <body>
     <div class="container">
       <div class="header">
-        <div class="logo-header">
-          <div class="logo-box logo-c">C</div>
-          <div class="logo-box logo-o">O</div>
-          <div class="logo-box logo-m">m</div>
-          <div class="logo-box logo-o2">o</div>
-        </div>
+        <img
+          id="logoFormulario"
+          src="/logo_como.webp"
+          alt="Logo COMO"
+          class="logo-header"
+          style="width: 80px; height: 80px; object-fit: contain"
+        />
         <div class="header-text">
           <h1>DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
           <p>Capacitación de Personal de Nuevo Ingreso - Área de Ventas</p>
@@ -1122,6 +1123,35 @@
     </div>
 
     <script>
+      // 🔷 CONFIGURACIÓN DEL LOGO
+      // Cambia esta URL por tu logo
+      const LOGO_URL = "/logo_como.webp"; // Reemplaza con tu URL de logo
+
+      // Para convertir a base64 (opcional)
+      let logoImageData = null;
+
+      // Función para cargar logo desde URL
+      async function cargarLogoDesdeURL(url) {
+        try {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            logoImageData = e.target.result;
+            document.getElementById("logoFormulario").src = url;
+          };
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.log("No se pudo cargar el logo desde URL");
+        }
+      }
+
+      // Cargar logo al iniciar
+      window.addEventListener("load", function () {
+        document.getElementById("logoFormulario").src = LOGO_URL;
+        cargarLogoDesdeURL(LOGO_URL);
+      });
+
       const canvas = document.getElementById("signatureCanvas");
       const ctx = canvas.getContext("2d");
       let isDrawing = false;
@@ -1322,6 +1352,12 @@
         function header() {
           doc.setFillColor(0, 51, 102);
           doc.rect(0, 0, pageWidth, 28, "F");
+
+          // Agregar logo si existe
+          if (logoImageData) {
+            doc.addImage(logoImageData, "PNG", 10, 3, 20, 22);
+          }
+
           doc.setTextColor(255, 255, 255);
           doc.setFont("times", "bold");
           doc.setFontSize(11);
