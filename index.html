@@ -31,34 +31,114 @@
         .header {
             background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
             color: white;
-            padding: 40px 20px;
+            padding: 20px;
             text-align: center;
             position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            min-height: 120px;
         }
 
         .logo-header {
-            position: absolute;
-            left: 20px;
-            top: 10px;
-            display: flex;
-            gap: 4px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
         }
 
         .logo-box {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             font-weight: bold;
-            font-size: 24px;
+            font-size: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 2px solid black;
         }
 
-        .logo-c { background: white; color: #0d47a1; }
+        .logo-c { background: black; color: white; border: none; }
         .logo-o { background: white; color: black; }
         .logo-m { background: white; color: black; }
-        .logo-o2 { background: #0d47a1; color: white; }
+        .logo-o2 { background: black; color: white; border: none; }
+
+        .header-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .header-content h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+
+        .header-content p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+                min-height: auto;
+            }
+
+            .logo-header {
+                width: 70px;
+                height: 70px;
+            }
+
+            .logo-box {
+                width: 35px;
+                height: 35px;
+                font-size: 24px;
+            }
+
+            .header-content {
+                text-align: center;
+            }
+
+            .header-content h1 {
+                font-size: 18px;
+            }
+
+            .header-content p {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px;
+            }
+
+            .logo-header {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-box {
+                width: 30px;
+                height: 30px;
+                font-size: 20px;
+                border: 1.5px solid black;
+            }
+
+            .header-content h1 {
+                font-size: 16px;
+            }
+
+            .header-content p {
+                font-size: 11px;
+            }
+        }
 
         .header h1 {
             font-size: 28px;
@@ -328,8 +408,10 @@
                 <div class="logo-box logo-m">m</div>
                 <div class="logo-box logo-o2">o</div>
             </div>
-            <h1>DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
-            <p>Capacitación de Personal de Nuevo Ingreso - Área de Ventas</p>
+            <div class="header-content">
+                <h1>DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN</h1>
+                <p>Capacitación de Personal de Nuevo Ingreso - Área de Ventas</p>
+            </div>
         </div>
 
         <div class="content">
@@ -803,29 +885,51 @@
                 doc.setFillColor(13, 71, 161);
                 doc.rect(0, 0, pageWidth, 20, 'F');
                 
-                // Logo
+                // Logo COMO más grande en esquina izquierda
                 const logoX = 10;
-                const logoY = 3;
-                const logoSize = 3.5;
-                doc.setLineWidth(0.15);
-                doc.setDrawColor(255, 255, 255);
+                const logoY = 2;
+                const logoSize = 4.5;
                 
-                doc.setFillColor(255, 255, 255);
-                doc.rect(logoX, logoY, logoSize, logoSize, 'F');
-                doc.setFillColor(255, 255, 255);
-                doc.rect(logoX + logoSize, logoY, logoSize, logoSize, 'F');
-                doc.setFillColor(255, 255, 255);
-                doc.rect(logoX, logoY + logoSize, logoSize, logoSize, 'F');
-                doc.setFillColor(13, 71, 161);
-                doc.rect(logoX + logoSize, logoY + logoSize, logoSize, logoSize, 'F');
+                doc.setLineWidth(0.2);
                 
+                // C - negro
+                doc.setFillColor(0, 0, 0);
+                doc.setDrawColor(0, 0, 0);
+                doc.rect(logoX, logoY, logoSize, logoSize, 'FD');
                 doc.setTextColor(255, 255, 255);
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.text('CONFORMIDAD DE CAPACITACIÓN', pageWidth / 2, 8, { align: 'center' });
                 doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('C', logoX + logoSize/2, logoY + logoSize/1.3, { align: 'center' });
+                
+                // O - blanco
+                doc.setFillColor(255, 255, 255);
+                doc.setDrawColor(0, 0, 0);
+                doc.rect(logoX + logoSize, logoY, logoSize, logoSize, 'FD');
+                doc.setTextColor(0, 0, 0);
+                doc.text('O', logoX + logoSize + logoSize/2, logoY + logoSize/1.3, { align: 'center' });
+                
+                // m - blanco
+                doc.setFillColor(255, 255, 255);
+                doc.setDrawColor(0, 0, 0);
+                doc.rect(logoX, logoY + logoSize, logoSize, logoSize, 'FD');
+                doc.setTextColor(0, 0, 0);
+                doc.text('m', logoX + logoSize/2, logoY + logoSize + logoSize/1.3, { align: 'center' });
+                
+                // o - negro
+                doc.setFillColor(0, 0, 0);
+                doc.setDrawColor(0, 0, 0);
+                doc.rect(logoX + logoSize, logoY + logoSize, logoSize, logoSize, 'FD');
+                doc.setTextColor(255, 255, 255);
+                doc.text('o', logoX + logoSize + logoSize/2, logoY + logoSize + logoSize/1.3, { align: 'center' });
+                
+                // Texto del header
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(13);
+                doc.setFont('helvetica', 'bold');
+                doc.text('DOCUMENTO DE CONFORMIDAD DE CAPACITACIÓN', pageWidth / 2, 9, { align: 'center' });
+                doc.setFontSize(8);
                 doc.setFont('helvetica', 'normal');
-                doc.text('Capacitación de Personal de Nuevo Ingreso', pageWidth / 2, 14, { align: 'center' });
+                doc.text('Capacitación de Personal de Nuevo Ingreso - Área de Ventas', pageWidth / 2, 15, { align: 'center' });
             }
 
             addHeader();
