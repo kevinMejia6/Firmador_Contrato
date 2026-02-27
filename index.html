@@ -36,10 +36,7 @@
           <p>Se ha descargado tu PDF de conformidad</p>
         </div>
 
-        <div class="loading" id="loading">
-          <div class="spinner"></div>
-          <p>Generando tu PDF...</p>
-        </div>
+       
 
         <form id="mainForm">
           <!-- SECCIÓN 1: DATOS DEL PARTICIPANTE -->
@@ -68,34 +65,23 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Canal al que aplica *</label>
-              <div class="checkbox-group">
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="canal_paneles"
-                    name="canal"
-                    value="Paneles"
-                    required
-                  />
-                  <label for="canal_paneles">Paneles</label>
-                </div>
-                <div class="checkbox-item">
-                  <input
-                    type="radio"
-                    id="canal_promotoria"
-                    name="canal"
-                    value="Promotoría"
-                  />
-                  <label for="canal_promotoria">Promotoría</label>
-                </div>
-              </div>
-            </div>
+            
 
             <div class="form-group">
               <label>Supervisor *</label>
-              <input type="text" id="supervisor" required />
+            
+              <div style="display:flex; gap:10px;">
+                <select id="supervisor" required style="flex:1;">
+                  <option value="">Cargando supervisores...</option>
+                </select>
+            
+                <button type="button" id="btnNuevoSupervisor">
+                  + Nuevo
+                </button>
+                <button type="button" id="btnAdministrarSupervisor">
+                  Administrar
+                </button>
+              </div>
             </div>
 
             <div class="form-row">
@@ -183,22 +169,17 @@
             </div>
 
             <div class="form-row">
+
               <div class="form-group">
-                <label>Fecha de Capacitación *</label>
-                <input type="date" id="fechaCapacitacion" required />
+                <label>Fecha de Inicio *</label>
+                <input type="date" id="fechaInicio" required />
               </div>
+            
               <div class="form-group">
-                <label>Duración *</label>
-                <select id="duracion" required>
-                  <option value="">Selecciona duración</option>
-                  <option value="Media jornada (1 día)">
-                    Media jornada (1 día)
-                  </option>
-                  <option value="Jornada completa (2 días o más)">
-                    Jornada completa (2 días o más)
-                  </option>
-                </select>
+                <label>Fecha de Finalización *</label>
+                <input type="date" id="fechaFin" required />
               </div>
+            
             </div>
 
             <div class="form-group">
@@ -216,287 +197,186 @@
           </div>
 
           <!-- SECCIÓN 3: CONTENIDOS BRINDADOS -->
-          <div class="form-section">
+          <div class="checkbox-group">
             <h2 class="section-title">3. CONTENIDOS BRINDADOS</h2>
-            <p style="margin-bottom: 15px; color: #666; font-size: 13px">
-              Seleccione los temas tratados durante la capacitación:
-            </p>
 
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont1"
-                  name="contenidos"
-                  value="Políticas y dinámica de trabajo de la empresa"
-                />
-                <label for="cont1"
-                  >Políticas y dinámica de trabajo de la empresa</label
-                >
+            <!-- 1 -->
+            <div class="contenido-bloque">
+              <div class="checkbox-item titulo-principal">
+                <input type="checkbox" id="cont1" name="contenidos" value="Bienvenida a COMO">
+                <label for="cont1"><strong>1. Bienvenida a COMO</strong></label>
               </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont2"
-                  name="contenidos"
-                  value="Horarios de trabajo (Los horarios de entrada y salida pueden variar según consideraciones de supervisor y temporada)"
-                />
-                <label for="cont2"
-                  >Horarios de trabajo (Los horarios de entrada y salida pueden
-                  variar según consideraciones de supervisor y temporada)</label
-                >
+          
+              <ul class="subtemas">
+                <li>Políticas, normativas y dinámica de trabajo de la empresa.</li>
+                <li>Fechas y dinámica de pagos de quincenas y comisiones.</li>
+                <li>Horarios de trabajo.</li>
+              </ul>
+            </div>
+          
+            <!-- 2 -->
+            <div class="contenido-bloque">
+              <div class="checkbox-item titulo-principal">
+                <input type="checkbox" id="cont2" name="contenidos" value="Dinámica de promotoría">
+                <label for="cont2"><strong>2. Dinámica de promotoría</strong></label>
               </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont3"
-                  name="contenidos"
-                  value="Introducción al puesto de trabajo"
-                />
-                <label for="cont3">Introducción al puesto de trabajo</label>
+          
+              <ul class="subtemas">
+                <li>Metodología de trabajo.</li>
+                <li>Productos por comercializar.</li>
+                <li>Medición de calidad y términos de mediciones.</li>
+                <li>Salario, prestaciones y tabla de comisiones.</li>
+                <li>Política sobre el fraude.</li>
+              </ul>
+            </div>
+          
+            <!-- 3 -->
+            <div class="contenido-bloque">
+              <div class="checkbox-item titulo-principal">
+                <input type="checkbox" id="cont3" name="contenidos" value="Información sobre acciones de personal">
+                <label for="cont3"><strong>3. Información sobre acciones de personal</strong></label>
               </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont4"
-                  name="contenidos"
-                  value="Información sobre acciones de personal"
-                />
-                <label for="cont4"
-                  >Información sobre acciones de personal</label
-                >
+          
+              <ul class="subtemas">
+                <li>Acciones de personal de registro.</li>
+                <li>Acciones de personal de amonestación.</li>
+              </ul>
+            </div>
+          
+            <!-- 4 -->
+            <div class="contenido-bloque">
+              <div class="checkbox-item titulo-principal">
+                <input type="checkbox" id="cont4" name="contenidos" value="Sistema de vendedores">
+                <label for="cont4"><strong>4. Sistema de vendedores</strong></label>
               </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont5"
-                  name="contenidos"
-                  value="Activación de simcard, y realización de portabilidad en bot y página web"
-                />
-                <label for="cont5"
-                  >Activación de simcard, y realización de portabilidad en bot y
-                  página web</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont6"
-                  name="contenidos"
-                  value="Registro de ventas en Aura e Icaro"
-                />
-                <label for="cont6">Registro de ventas en Aura e Icaro</label>
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont7"
-                  name="contenidos"
-                  value="Oferta comercial de paquetes, smartphones al crédito y contado en plataformas"
-                />
-                <label for="cont7"
-                  >Oferta comercial de paquetes, smartphones al crédito y
-                  contado en plataformas</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont8"
-                  name="contenidos"
-                  value="Política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar y COMO"
-                />
-                <label for="cont8"
-                  >Política interna de la empresa sobre Fraude, usurpación de
-                  identidad y sobreprecios de los productos prepago de Movistar
-                  y COMO</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont9"
-                  name="contenidos"
-                  value="Ejercicio en bot de telefónica para el ingreso de activaciones y portabilidad"
-                />
-                <label for="cont9"
-                  >Ejercicio en bot de telefónica para el ingreso de
-                  activaciones y portabilidad</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont10"
-                  name="contenidos"
-                  value="Que la plaza es 100% de campo y recomendaciones para ejercerlo"
-                />
-                <label for="cont10"
-                  >Que la plaza es 100% de campo y recomendaciones para
-                  ejercerlo</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input
-                  type="checkbox"
-                  id="cont11"
-                  name="contenidos"
-                  value="Las condiciones de comisiones actuales"
-                />
-                <label for="cont11"
-                  >Las condiciones de comisiones actuales</label
-                >
+          
+              <ul class="subtemas">
+                <li>Chat Bot en Telegram.</li>
+                <li>Página web de activación.</li>
+                <li>Ícaro - Facturación electrónica y boletas.</li>
+                <li>Aura - Ingreso de ventas.</li>
+                <li>Chat Bot COMO - Consulta de ventas.</li>
+              </ul>
+            </div>
+          
+            <!-- 5 -->
+            <div class="contenido-bloque">
+              <div class="checkbox-item titulo-principal">
+                <input type="checkbox" id="cont5" name="contenidos" value="Oferta comercial activa de Movistar">
+                <label for="cont5"><strong>5. Oferta comercial activa de Movistar</strong></label>
               </div>
             </div>
+          
           </div>
 
           <!-- SECCIÓN 4: CONFIRMACIÓN DE COMPRENSIÓN -->
-          <div class="form-section">
-            <h2 class="section-title">4. POR LO QUE HAGO CONSTAR QUE:</h2>
+<div class="form-section">
+  <h2 class="section-title">4. POR LO QUE HAGO CONSTAR QUE:</h2>
 
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp1" name="comprension" required />
-                <label for="comp1"
-                  >Comprendí la dinámica de trabajo, horarios y permisos
-                  laborales y sé cuáles son los procesos para seguir o en su
-                  defecto a quién dirigirme ante una situación que pueda
-                  enfrentar que imposibilite el cumplimiento de estos y los
-                  procesos o consecuencias de no seguir los criterios bajo la
-                  normativa del reglamento y políticas internas tanto del código
-                  de trabajo que la empresa implementará.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp2" name="comprension" required />
-                <label for="comp2"
-                  >Comprendí la dinámica de trabajo en campo y el manejo de los
-                  sistemas de activación, registro y facturación que utilizaré,
-                  comprometiéndome a ejercer mis funciones de ventas bajo los
-                  criterios y lineamiento de la empresa, también a usar los
-                  sistemas de manera adecuada bajo los criterios del empleador y
-                  a reportar de manera activa algún imprevisto o problema que
-                  sufra en los mismos con mi jefe inmediato o personal instruido
-                  para el apoyo de este.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp3" name="comprension" required />
-                <label for="comp3"
-                  >Fui instruido/a sobre la política interna de la empresa sobre
-                  Fraude, usurpación de identidad y sobreprecios de los
-                  productos prepago de Movistar a comercializar en mis
-                  actividades diarias y las consecuencias de estas malas
-                  prácticas.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp4" name="comprension" required />
-                <label for="comp4"
-                  >Comprendí la oferta comercial activa presentada por el
-                  capacitador y me comprometo a darle seguimiento y repaso a la
-                  oferta y las variantes que se puedan presentar por
-                  Movistar.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp5" name="comprension" required />
-                <label for="comp5"
-                  >Comprendí la responsabilidad que poseo al portar uniformes
-                  que representen la marca MOVISTAR EL SALVADOR comprometiéndome
-                  a hacer un buen uso de este durante horario laboral o fuera
-                  del mismo y comprendo las consecuencias por el mal uso de
-                  este.</label
-                >
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="comp6" name="comprension" required />
-                <label for="comp6"
-                  >Comprendí y acepto las condiciones de pago de comisión
-                  proporcional durante 3 meses: Me doy por enterado que en caso
-                  de no cumplir la meta establecida para el canal y departamento
-                  correspondiente del KPI de SALDO Y ACTIVACIONES se me pagará
-                  el 15% del saldo inicial (Primer recarga) de las activaciones
-                  de calidad, y que este beneficio estará habilitado hasta tener
-                  ventas en N3 (los primeros 3 meses de relación laboral) para
-                  medición mientras SIGA LABORANDO PARA LA EMPRESA, sé que en el
-                  caso de renuncia o despido la medición se realizará según meta
-                  correspondiente del canal y departamento como vendedor antiguo
-                  anulando lo anteriormente establecido al principio de este
-                  punto.</label
-                >
-              </div>
-            </div>
-          </div>
+  <div class="checkbox-group">
 
-          <!-- SECCIÓN 5: TÉRMINOS Y CONDICIONES -->
-          <div class="form-section">
-            <h2 class="section-title">5. ACEPTACIÓN Y TÉRMINOS</h2>
+    <!-- 1 -->
+    <div class="checkbox-item">
+      <input type="checkbox" id="comp1" name="comprension" required />
+      <label for="comp1">
+        He comprendido la dinámica laboral, horarios y el marco legal del reglamento interno y código de trabajo, incluyendo las consecuencias que asumir en caso de su incumplimiento y los canales de comunicación pertinentes. Asimismo, comprendo que el trabajo es de campo y el uso correcto de los sistemas de activación y facturación, comprometiéndome a cumplir los lineamientos de venta de la empresa y a reportar activamente cualquier incidencia técnica o administrativa a mi jefe inmediato o al personal de apoyo designado.
+      </label>
+    </div>
 
-            <div class="info-box">
-              <strong>TÉRMINOS Y CONDICIONES GENERALES</strong>
-            </div>
+    <!-- 2 -->
+    <div class="checkbox-item">
+      <input type="checkbox" id="comp2" name="comprension" required />
+      <label for="comp2">
+        He sido instruido sobre las políticas contra el fraude, usurpación de identidad y sobreprecios, aceptando las consecuencias de dichas malas prácticas; asimismo, comprendo la oferta comercial de Movistar y me comprometo a su seguimiento y actualización constante ante cualquier variante.
+      </label>
+    </div>
 
-            <div class="terminos-section">
-              <h4>1. Naturaleza del documento:</h4>
-              <p>
-                Esta constancia no constituye un contrato laboral, ni genera
-                derechos o compromisos adicionales a los establecidos por la ley
-                o por el contrato individual de trabajo. Su finalidad es dejar
-                constancia de la participación y comprensión de los temas
-                abordados durante la capacitación de inducción.
-              </p>
+    <!-- 3 (antes era el 5) -->
+    <div class="checkbox-item">
+      <input type="checkbox" id="comp3" name="comprension" required />
+      <label for="comp3">
+        Comprendí la responsabilidad que poseo al portar uniformes que representen la marca MOVISTAR EL SALVADOR comprometiéndome a hacer un buen uso de este durante horario laboral o fuera del mismo y comprendo las consecuencias por el mal uso de este.
+      </label>
+    </div>
 
-              <h4>2. Firma digital:</h4>
-              <p>
-                Al firmar electrónicamente este documento, el participante
-                confirma su asistencia y comprensión de los contenidos
-                descritos, así como su compromiso de aplicar lo aprendido en el
-                desempeño de sus funciones. La firma digital o electrónica tiene
-                la misma validez que una firma manuscrita para efectos de
-                registro interno y cumplimiento de procesos de capacitación.
-              </p>
+    <!-- 4 (nuevo 6 actualizado) -->
+    <div class="checkbox-item">
+      <input type="checkbox" id="comp4" name="comprension" required />
+      <label for="comp4">
+        Comprendí y acepto las condiciones de pago de comisiones proporcionales durante los primeros 3 meses de relación laboral, en donde se me pagará el 15% del saldo inicial de las activaciones de calidad independientemente la cantidad vendida durante un mes natural y que este se mantendrá hasta que en mis resultados posea un N3 (ventas de hace 3 meses activas a la fecha de medición) para un cálculo regular y siempre y cuando exista relación laboral, comprendo que en caso de despido o renuncia el cálculo de mis comisiones se hará tomando de base la meta del canal y el departamento donde me desempeño.
+      </label>
+    </div>
 
-              <h4>3. Resguardo y confidencialidad:</h4>
-              <p>
-                El documento será almacenado en formato digital dentro del
-                sistema interno de la empresa y una copia será entregada al
-                participante de forma virtual para su propio registro y
-                respaldo. Esta constancia se utiliza como evidencia
-                administrativa de participación y comprensión de los temas
-                explicados durante la inducción, incluyendo condiciones
-                operativas, dinámicas laborales y políticas internas de
-                comisiones y desempeño. Su propósito es servir de respaldo en
-                caso de requerirse una verificación interna o ante autoridades
-                competentes sobre los contenidos abordados en la capacitación.
-              </p>
+  </div>
+</div>
+<!-- SECCIÓN 5: ACEPTACIÓN Y TÉRMINOS -->
+<div class="form-section">
+  <h2 class="section-title">5. ACEPTACIÓN Y TÉRMINOS</h2>
 
-              <h4>4. Actualización de contenidos:</h4>
-              <p>
-                La empresa podrá actualizar los temas de inducción o modificar
-                procedimientos según necesidades operativas, legales o de
-                seguridad. El colaborador se compromete a mantenerse informado
-                de dichos cambios y participar en futuras capacitaciones cuando
-                sean convocadas.
-              </p>
+  <div class="terminos-section">
 
-              <h4>5. Aceptación:</h4>
-              <p>
-                Al firmar, el colaborador declara que leyó, comprendió y acepta
-                el contenido del presente documento, así como las políticas,
-                dinámicas y procedimientos explicados durante la capacitación.
-              </p>
-            </div>
+    <div class="termino-item">
+      <button type="button" class="termino-header">
+        1. Naturaleza del documento:
+        <span class="icono">▸</span>
+      </button>
+      <div class="termino-content">
+        <p>
+          Esta constancia no constituye ni sustituye un contrato laboral, ni implica compromisos adicionales a los establecidos por la ley o el contrato de trabajo. Su finalidad es dejar evidencia de la participación y comprensión de los temas, dinámicas y condiciones que la empresa ofrece para la plaza en la que se desempeñará el empleado, abordados durante la capacitación.
+        </p>
+      </div>
+    </div>
+    <div class="termino-item">
+      <button type="button" class="termino-header">
+        2. Firma digital:
+        <span class="icono">▸</span>
+      </button>
+      <div class="termino-content">
+        <p>
+          Al firmar electrónicamente este documento, el empleado confirma su asistencia y comprensión de los contenidos descritos, así como su compromiso de aplicar lo aprendido de manera correcta y responsable en el desempeño de sus funciones. La firma digital o electrónica tendrá la misma validez que la firma manuscrita para efectos de registro interno, cumplimiento de controles de capacitación u otros fines administrativos que el empleador considere necesarios.        </p>
+      </div>
+    </div>
+    <div class="termino-item">
+      <button type="button" class="termino-header">
+        3. Resguardo y confidencialidad:
+        <span class="icono">▸</span>
+      </button>
+      <div class="termino-content">
+        <p>
+          Este documento será almacenado en la bitácora del empleado dentro de los sistemas de la empresa y se entregará una copia en formato PDF para su respaldo personal. La constancia servirá como evidencia administrativa y operativa de la participación y comprensión de los temas abordados durante la capacitación o inducción. Podrá utilizarse como respaldo en caso de requerirse una verificación interna o ante autoridades competentes sobre los contenidos impartidos al inicio de la relación laboral o en refuerzos posteriores.
+        </div>
+    </div>
+    <div class="termino-item">
+      <button type="button" class="termino-header">
+        4. Actualización de contenidos:
+        <span class="icono">▸</span>
+      </button>
+      <div class="termino-content">
+        <p>
+          La empresa podrá actualizar los temas de inducción o modificar procedimientos según necesidades operativas, legales o de seguridad. El empleado se compromete a mantenerse informado sobre dichos cambios y a participar en futuras capacitaciones cuando sea convocado.
+        </div>
+    </div>
+    <div class="termino-item">
+      <button type="button" class="termino-header">
+        4. Actualización de contenidos:
+        <span class="icono">▸</span>
+      </button>
+      <div class="termino-content">
+        <p>
+          Al firmar, el empleado declara que ha leído, comprendido y acepta los contenidos, términos, dinámicas, condiciones y procedimientos establecidos para la plaza para la cual ha sido contratado. Esta aceptación no implica compromisos distintos a los establecidos por la ley o el contrato de trabajo, sino el cumplimiento adecuado de las funciones propias de su puesto conforme a lo requerido por el empleador.
+        </div>
+    </div>
+  </div>
 
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <input type="checkbox" id="acepta" required />
-                <label for="acepta"
-                  >Acepto los términos y condiciones descritos arriba</label
-                >
-              </div>
-            </div>
-          </div>
+  <div class="checkbox-group">
+    <div class="checkbox-item">
+      <input type="checkbox" id="acepta" required />
+      <label for="acepta">
+        Acepto los términos y condiciones descritos anteriormente.
+      </label>
+    </div>
+  </div>
+</div>
 
           <!-- SECCIÓN 6: FIRMA DIGITAL -->
           <div class="form-section">
@@ -511,26 +391,16 @@
               ✏️ Esperando firma...
             </div>
             <div class="buttons">
-              <button
-                type="button"
-                class="btn-secondary"
-                onclick="clearSignature()"
-              >
-                🔄 Limpiar Firma
-              </button>
+              <button type="button" id="btnClearSignature">🔄 Limpiar Firma</button>
+             
             </div>
           </div>
 
           <!-- BOTONES FINALES -->
           <div class="form-section" style="border-bottom: none">
             <div class="buttons">
-              <button
-                type="button"
-                class="btn-secondary"
-                onclick="limpiarFormulario()"
-              >
-                Limpiar Formulario
-              </button>
+              <button type="button" id="btnLimpiar">Limpiar Formularo</button>
+            
               <button type="submit" class="btn-primary">
                 ✓ Generar PDF de Conformidad
               </button>
@@ -538,7 +408,51 @@
           </div>
         </form>
       </div>
-      <script src="Js/script.js"></script>
+     
+      <script type="module" src="Js/script.js"></script> 
     </div>
+
+    <div class="modal-overlay" id="modalSupervisor">
+      <div class="modal">
+        <h3>Agregar Supervisor</h3>
+    
+        <div class="modal-body">
+          <input type="text" id="nuevoNombre" placeholder="Nombres del supervisor" />
+          <input type="text" id="nuevoApellido" placeholder="Apellidos del supervisor" />
+          <input type="text" id="nuevaSucursal" placeholder="Sucursal (opcional)" />
+
+          <div id="errorSupervisor" class="modal-error"></div>
+        </div>
+    
+        <div class="modal-footer">
+          <button type="button" id="cerrarModal">Cancelar</button>
+          <button type="button" id="guardarSupervisor">Guardar</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="modalAdministrar">
+      <div class="modal modal-large">
+        <h3>Administrar Supervisores</h3>
+    
+        <div class="tabla-supervisores">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Sucursal</th>
+                <th>Activo</th>
+              </tr>
+            </thead>
+            <tbody id="tablaSupervisoresBody">
+            </tbody>
+          </table>
+        </div>
+    
+        <div class="modal-footer">
+          <button type="button" id="cerrarModalAdmin">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

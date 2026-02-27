@@ -1,11 +1,20 @@
-// 🔷 CONFIGURACIÓN DEL LOGO
+import { db } from "./firebase.js";
+import { 
+  collection, 
+  getDocs, 
+  query, 
+  where,
+  addDoc,
+  updateDoc,
+  doc
+} 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 // Para GitHub Pages - reemplaza con tu usuario y repositorio
 const LOGO_URL =
   "https://raw.githubusercontent.com/kevinMejia6/Firmador_Contrato/main/logo_como.webp";
 
 let logoImageData = null;
 
-// Función para cargar logo desde URL
 async function cargarLogoDesdeURL(url) {
   try {
     const response = await fetch(url);
@@ -27,6 +36,7 @@ async function cargarLogoDesdeURL(url) {
 
 // Cargar logo al iniciar
 window.addEventListener("load", function () {
+  cargarSupervisores();
   cargarLogoDesdeURL(LOGO_URL);
 });
 
@@ -162,13 +172,42 @@ document
     const comprensiones = document.querySelectorAll(
       'input[name="comprension"]:checked',
     ).length;
-    if (comprensiones < 6) {
+    if (comprensiones < 4) {
       showToast(
         "⚠️ Por favor, marca todas las casillas de comprensión",
         "warning",
       );
       return;
     }
+
+    const fechaInicio = document.getElementById("fechaInicio").value;
+    const fechaFin = document.getElementById("fechaFin").value;
+
+    if (!fechaInicio || !fechaFin) {
+      showToast("⚠️ Debes completar las fechas de capacitación", "warning");
+      return;
+    }
+
+    if (new Date(fechaFin) < new Date(fechaInicio)) {
+      showToast("⚠️ La fecha final no puede ser menor que la inicial", "warning");
+      return;
+    }
+
+    const telefono = document.getElementById("telefono").value;
+  const dui = document.getElementById("dui").value;
+
+  const telefonoRegex = /^\d{4}-\d{4}$/;
+  const duiRegex = /^\d{8}-\d{1}$/;
+
+  if (!telefonoRegex.test(telefono)) {
+    showToast("⚠️ El teléfono debe tener formato 0000-0000", "warning");
+    return;
+  }
+
+  if (!duiRegex.test(dui)) {
+    showToast("⚠️ El DUI debe tener formato 00000000-0", "warning");
+    return;
+  }
 
     // Mostrar loading
     document.getElementById("loading").classList.add("show");
@@ -189,7 +228,30 @@ document
       }
     }, 1200);
   });
+  function addSectionTitle(text) {
 
+    if (y > pageHeight - 40) {
+      newPage();
+    }
+  
+    doc.setFont("times", "bold");
+    doc.setTextColor(0, 51, 102);
+    doc.setFontSize(11);
+  
+    doc.text(text, margin, y);
+    y += 5;
+  
+    doc.setDrawColor(0, 51, 102);
+    doc.setLineWidth(0.4);
+    doc.line(margin, y, pageWidth - margin, y);
+  
+    y += 6;
+  
+    // Reset a normal para el contenido
+    doc.setFont("times", "normal");
+    doc.setTextColor(0);
+    doc.setFontSize(9);
+  }
 function generarPDF() {
   const { jsPDF } = window.jspdf;
 
@@ -197,8 +259,11 @@ function generarPDF() {
   const telefono = document.getElementById("telefono").value;
   const email = document.getElementById("email").value;
   const dui = document.getElementById("dui").value;
-  const canal = document.querySelector('input[name="canal"]:checked').value;
-  const supervisor = document.getElementById("supervisor").value;
+  //const canal = document.querySelector('input[name="canal"]:checked').value;
+  //const supervisor = document.getElementById("supervisor").value;
+  const selectSupervisor = document.getElementById("supervisor");
+  const supervisor =
+  selectSupervisor.options[selectSupervisor.selectedIndex].text;
   const talla = document.getElementById("talla").value;
   const fecha = document.getElementById("fecha").value;
   const reingresoComo = document.querySelector(
@@ -207,8 +272,13 @@ function generarPDF() {
   const reingresoMarca = document.querySelector(
     'input[name="reingreso_marca"]:checked',
   ).value;
-  const fechaCapacitacion = document.getElementById("fechaCapacitacion").value;
-  const duracion = document.getElementById("duracion").value;
+  const fechaInicio = document.getElementById("fechaInicio").value;
+  const fechaFin = document.getElementById("fechaFin").value;
+
+  if (new Date(fechaFin) < new Date(fechaInicio)) {
+  showToast("⚠️ La fecha final no puede ser menor que la inicial", "warning");
+  return;
+}
   const instructor = document.getElementById("instructor").value;
   const contenidos = getContenidosSeleccionados();
   const signatureImage = canvas.toDataURL("image/png");
@@ -219,7 +289,9 @@ function generarPDF() {
   const pageHeight = doc.internal.pageSize.getHeight(); // 297mm
   const margin = 12; // Márgenes más pequeños
   let y = 35; // Aumentado de 30 a 35
-
+  const dias =
+  (new Date(fechaFin) - new Date(fechaInicio)) /
+  (1000 * 60 * 60 * 24) + 1;
   // 🔷 Encabezado institucional
   function header() {
     doc.setFillColor(0, 51, 102);
@@ -333,7 +405,7 @@ function generarPDF() {
   addParagraph(`DUI: ${dui}`, 3.8, 9);
   addParagraph(`Teléfono: ${telefono}`, 3.8, 9);
   addParagraph(`Correo Electrónico: ${email}`, 3.8, 9);
-  addParagraph(`Canal: ${canal}`, 3.8, 9);
+ // addParagraph(`Canal: ${canal}`, 3.8, 9);
   addParagraph(`Supervisor: ${supervisor}`, 3.8, 9);
   addParagraph(`Talla de Camisa: ${talla}`, 3.8, 9);
   addParagraph(`Fecha: ${fecha}`, 3.8, 9);
@@ -342,30 +414,18 @@ function generarPDF() {
   y += 2;
 
   // 🔹 2. Información de la Capacitación
-  doc.setFont("times", "bold");
-  doc.setTextColor(0, 51, 102);
-  doc.setFontSize(10);
-  doc.text("2. INFORMACIÓN DE LA CAPACITACIÓN", margin, y);
-  y += 4.5;
-  doc.line(margin, y, pageWidth - margin, y);
-  y += 5;
+  addSectionTitle("2. INFORMACIÓN DE LA CAPACITACIÓN");
 
   doc.setFont("times", "normal");
   doc.setTextColor(0);
-  addParagraph(`Fecha de Capacitación: ${fechaCapacitacion}`, 3.8, 9);
-  addParagraph(`Duración: ${duracion}`, 3.8, 9);
+  addParagraph(`Duración: ${dias} día(s)`, 3.8, 9);
+  addParagraph(`Fecha de Inicio: ${fechaInicio}`, 3.8, 9);
+  addParagraph(`Fecha de Finalización: ${fechaFin}`, 3.8, 9);
   addParagraph(`Instructor: ${instructor}`, 3.8, 9);
   y += 2;
 
-  // 🔹 3. Contenidos brindados
-  checkSpace();
-  doc.setFont("times", "bold");
-  doc.setTextColor(0, 51, 102);
-  doc.setFontSize(10);
-  doc.text("3. CONTENIDOS BRINDADOS", margin, y);
-  y += 4.5;
-  doc.line(margin, y, pageWidth - margin, y);
-  y += 5;
+// 🔹 3. Contenidos brindados
+addSectionTitle("3. CONTENIDOS BRINDADOS");
 
   doc.setFont("times", "normal");
   doc.setTextColor(0);
@@ -387,12 +447,13 @@ function generarPDF() {
   doc.setFont("times", "normal");
   doc.setTextColor(0);
   const declaraciones = [
-    "Comprendí la dinámica de trabajo, horarios y permisos laborales y sé cuáles son los procesos para seguir o en su defecto a quién dirigirme ante una situación que pueda enfrentar que imposibilite el cumplimiento de estos y los procesos o consecuencias de no seguir los criterios bajo la normativa del reglamento y políticas internas tanto del código de trabajo que la empresa implementará.",
-    "Comprendí la dinámica de trabajo en campo y el manejo de los sistemas de activación, registro y facturación que utilizaré, comprometiéndome a ejercer mis funciones de ventas bajo los criterios y lineamiento de la empresa, también a usar los sistemas de manera adecuada bajo los criterios del empleador y a reportar de manera activa algún imprevisto o problema que sufra en los mismos con mi jefe inmediato o personal instruido para el apoyo de este.",
-    "Fui instruido/a sobre la política interna de la empresa sobre Fraude, usurpación de identidad y sobreprecios de los productos prepago de Movistar a comercializar en mis actividades diarias y las consecuencias de estas malas prácticas.",
-    "Comprendí la oferta comercial activa presentada por el capacitador y me comprometo a darle seguimiento y repaso a la oferta y las variantes que se puedan presentar por Movistar.",
+    "He comprendido la dinámica laboral, horarios y el marco legal del reglamento interno y código de trabajo, incluyendo las consecuencias que asumir en caso de su incumplimiento y los canales de comunicación pertinentes. Asimismo, comprendo que el trabajo es de campo y el uso correcto de los sistemas de activación y facturación, comprometiéndome a cumplir los lineamientos de venta de la empresa y a reportar activamente cualquier incidencia técnica o administrativa a mi jefe inmediato o al personal de apoyo designado.",
+  
+    "He sido instruido sobre las políticas contra el fraude, usurpación de identidad y sobreprecios, aceptando las consecuencias de dichas malas prácticas; asimismo, comprendo la oferta comercial de Movistar y me comprometo a su seguimiento y actualización constante ante cualquier variante.",
+  
     "Comprendí la responsabilidad que poseo al portar uniformes que representen la marca MOVISTAR EL SALVADOR comprometiéndome a hacer un buen uso de este durante horario laboral o fuera del mismo y comprendo las consecuencias por el mal uso de este.",
-    "Comprendí y acepto las condiciones de pago de comisión proporcional durante 3 meses: Me doy por enterado que en caso de no cumplir la meta establecida para el canal y departamento correspondiente del KPI de SALDO Y ACTIVACIONES se me pagará el 15% del saldo inicial (Primer recarga) de las activaciones de calidad, y que este beneficio estará habilitado hasta tener ventas en N3 (los primeros 3 meses de relación laboral) para medición mientras SIGA LABORANDO PARA LA EMPRESA, sé que en el caso de renuncia o despido la medición se realizará según meta correspondiente del canal y departamento como vendedor antiguo anulando lo anteriormente establecido al principio de este punto.",
+  
+    "Comprendí y acepto las condiciones de pago de comisiones proporcionales durante los primeros 3 meses de relación laboral, en donde se me pagará el 15% del saldo inicial de las activaciones de calidad independientemente la cantidad vendida durante un mes natural y que este se mantendrá hasta que en mis resultados posea un N3 (ventas de hace 3 meses activas a la fecha de medición) para un cálculo regular y siempre y cuando exista relación laboral, comprendo que en caso de despido o renuncia el cálculo de mis comisiones se hará tomando de base la meta del canal y el departamento donde me desempeño."
   ];
   declaraciones.forEach((t, i) => {
     addParagraph(`${i + 1}. ${t}`, 4.2, 8.5);
@@ -412,30 +473,29 @@ function generarPDF() {
     {
       titulo: "1. Naturaleza del documento:",
       texto:
-        "Esta constancia no constituye un contrato laboral ni genera derechos adicionales. Su finalidad es dejar constancia de la participación y comprensión de los temas abordados durante la capacitación de inducción.",
+        "Esta constancia no constituye ni sustituye un contrato laboral, ni implica compromisos adicionales a los establecidos por la ley o el contrato de trabajo. Su finalidad es dejar evidencia de la participación y comprensión de los temas, dinámicas y condiciones que la empresa ofrece para la plaza en la que se desempeñará el empleado, abordados durante la capacitación."
     },
     {
       titulo: "2. Firma digital:",
       texto:
-        "La firma electrónica aquí plasmada tiene validez legal equivalente a una firma manuscrita, confirmando la asistencia y comprensión del participante.",
+        "Al firmar electrónicamente este documento, el empleado confirma su asistencia y comprensión de los contenidos descritos, así como su compromiso de aplicar lo aprendido de manera correcta y responsable en el desempeño de sus funciones. La firma digital o electrónica tendrá la misma validez que la firma manuscrita para efectos de registro interno, cumplimiento de controles de capacitación u otros fines administrativos que el empleador considere necesarios."
     },
     {
       titulo: "3. Resguardo y confidencialidad:",
       texto:
-        "El documento será almacenado digitalmente y protegido conforme a las políticas de confidencialidad de Comercialización en Movimiento S.A. de C.V., siendo de uso exclusivo interno.",
+        "Este documento será almacenado en la bitácora del empleado dentro de los sistemas de la empresa y se entregará una copia en formato PDF para su respaldo personal. La constancia servirá como evidencia administrativa y operativa de la participación y comprensión de los temas abordados durante la capacitación o inducción. Podrá utilizarse como respaldo en caso de requerirse una verificación interna o ante autoridades competentes sobre los contenidos impartidos al inicio de la relación laboral o en refuerzos posteriores."
     },
     {
       titulo: "4. Actualización de contenidos:",
       texto:
-        "La empresa podrá modificar los contenidos o procedimientos según las necesidades operativas o normativas, comprometiéndose el colaborador a mantenerse informado.",
+        "La empresa podrá actualizar los temas de inducción o modificar procedimientos según necesidades operativas, legales o de seguridad. El empleado se compromete a mantenerse informado sobre dichos cambios y a participar en futuras capacitaciones cuando sea convocado."
     },
     {
       titulo: "5. Aceptación:",
       texto:
-        "El firmante declara haber leído, comprendido y aceptado todos los términos y políticas establecidas en la presente conformidad.",
-    },
+        "Al firmar, el empleado declara que ha leído, comprendido y acepta los contenidos, términos, dinámicas, condiciones y procedimientos establecidos para la plaza para la cual ha sido contratado. Esta aceptación no implica compromisos distintos a los establecidos por la ley o el contrato de trabajo, sino el cumplimiento adecuado de las funciones propias de su puesto conforme a lo requerido por el empleador."
+    }
   ];
-
   doc.setFont("times", "normal");
   doc.setTextColor(0);
   terminos.forEach((t) => {
@@ -479,3 +539,231 @@ function generarPDF() {
   const filename = `Conformidad_${nombre.replace(/\s+/g, "_")}_${dui}_${new Date().toISOString().split("T")[0]}.pdf`;
   doc.save(filename);
 }
+
+async function cargarSupervisores() {
+  const selectSupervisor = document.getElementById("supervisor");
+
+  try {
+    // Solo traer supervisores activos
+    const q = query(
+      collection(db, "supervisores"),
+      where("estado", "==", true)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    selectSupervisor.innerHTML = '<option value="">Seleccione un supervisor</option>';
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+
+      const nombreCompleto = `${data.nombres} ${data.apellidos}`;
+
+      const option = document.createElement("option");
+      option.value = nombreCompleto;
+      option.textContent = nombreCompleto;
+
+      selectSupervisor.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error("Error cargando supervisores:", error);
+    selectSupervisor.innerHTML = '<option value="">Error al cargar</option>';
+  }
+}
+
+const modal = document.getElementById("modalSupervisor");
+
+document.getElementById("btnNuevoSupervisor").addEventListener("click", () => {
+  modal.classList.add("show");
+});
+
+document.getElementById("cerrarModal").addEventListener("click", () => {
+  modal.classList.remove("show");
+});
+
+document.getElementById("guardarSupervisor").addEventListener("click", async () => {
+
+  const nombres = document.getElementById("nuevoNombre").value.trim();
+  const apellidos = document.getElementById("nuevoApellido").value.trim();
+  const sucursal = document.getElementById("nuevaSucursal").value.trim();
+
+  const errorDiv = document.getElementById("errorSupervisor");
+
+    errorDiv.style.display = "none";
+    document.getElementById("nuevoNombre").classList.remove("input-error");
+    document.getElementById("nuevoApellido").classList.remove("input-error");
+
+    if (!nombres || !apellidos) {
+
+      errorDiv.textContent = "⚠️ Completa nombres y apellidos";
+      errorDiv.style.display = "block";
+
+      if (!nombres) {
+        document.getElementById("nuevoNombre").classList.add("input-error");
+      }
+
+      if (!apellidos) {
+        document.getElementById("nuevoApellido").classList.add("input-error");
+      }
+
+      return;
+    }
+
+  try {
+
+    await addDoc(collection(db, "supervisores"), {
+      nombres,
+      apellidos,
+      sucursal,
+      estado: true,
+      creado: new Date()
+    });
+
+    alert("Supervisor agregado correctamente");
+
+    modal.classList.remove("show");
+
+    // limpiar inputs
+    document.getElementById("nuevoNombre").value = "";
+    document.getElementById("nuevoApellido").value = "";
+    document.getElementById("nuevaSucursal").value = "";
+
+    // recargar select
+    cargarSupervisores();
+
+  } catch (error) {
+    console.error(error);
+    alert("Error al guardar supervisor");
+  }
+
+});
+
+document.getElementById("btnClearSignature")
+  .addEventListener("click", clearSignature);
+  document.getElementById("btnLimpiar")
+  .addEventListener("click", limpiarFormulario);
+
+  document.getElementById("btnAdministrarSupervisor")
+  .addEventListener("click", () => {
+    document.getElementById("modalAdministrar").classList.add("show");
+    cargarSupervisoresAdmin();
+  });
+
+document.getElementById("cerrarModalAdmin")
+  .addEventListener("click", () => {
+    document.getElementById("modalAdministrar").classList.remove("show");
+  });
+  async function cargarSupervisoresAdmin() {
+
+    const tbody = document.getElementById("tablaSupervisoresBody");
+    tbody.innerHTML = "";
+  
+    const querySnapshot = await getDocs(collection(db, "supervisores"));
+  
+    querySnapshot.forEach((docSnap) => {
+  
+      const data = docSnap.data();
+  
+      const tr = document.createElement("tr");
+  
+      tr.innerHTML = `
+        <td>${data.nombres} ${data.apellidos}</td>
+        <td>${data.sucursal || "-"}</td>
+        <td>
+          <div class="radio-group">
+            <label>
+              <input type="radio" 
+                     name="estado_${docSnap.id}" 
+                     value="true"
+                     ${data.estado ? "checked" : ""}
+                     data-id="${docSnap.id}">
+              Sí
+            </label>
+            <label>
+              <input type="radio" 
+                     name="estado_${docSnap.id}" 
+                     value="false"
+                     ${!data.estado ? "checked" : ""}
+                     data-id="${docSnap.id}">
+              No
+            </label>
+          </div>
+        </td>
+      `;
+  
+      tbody.appendChild(tr);
+    });
+  
+  }
+  document.addEventListener("change", async (e) => {
+
+    if (e.target.matches('input[type="radio"][data-id]')) {
+  
+      const supervisorId = e.target.dataset.id;
+      const nuevoEstado = e.target.value === "true";
+  
+      try {
+  
+        await updateDoc(doc(db, "supervisores", supervisorId), {
+          estado: nuevoEstado
+        });
+  
+        showToast("Estado actualizado correctamente", "success");
+  
+        cargarSupervisores(); // refresca el select principal
+  
+      } catch (error) {
+        console.error(error);
+        showToast("Error actualizando estado", "error");
+      }
+    }
+  
+  });
+
+const inputTelefono = document.getElementById("telefono");
+
+inputTelefono.addEventListener("input", (e) => {
+  let value = e.target.value.replace(/\D/g, ""); // quitar todo lo que no sea número
+
+  if (value.length > 8) value = value.slice(0, 8);
+
+  if (value.length > 4) {
+    value = value.slice(0, 4) + "-" + value.slice(4);
+  }
+
+  e.target.value = value;
+});
+
+const inputDui = document.getElementById("dui");
+
+inputDui.addEventListener("input", (e) => {
+  let value = e.target.value.replace(/\D/g, "");
+
+  if (value.length > 9) value = value.slice(0, 9);
+
+  if (value.length > 8) {
+    value = value.slice(0, 8) + "-" + value.slice(8);
+  }
+
+  e.target.value = value;
+});
+const inputNombre = document.getElementById("nombre");
+
+inputNombre.addEventListener("input", (e) => {
+  // Permitir solo letras y espacios (incluye acentos)
+  e.target.value = e.target.value.replace(/[^a-zA-ZÁÉÍÓÚáéíóúÑñ\s]/g, "");
+});
+document.querySelectorAll(".termino-header").forEach(btn => {
+  btn.addEventListener("click", function () {
+
+    const item = this.parentElement;
+
+    // Cerrar otros si quieres modo exclusivo
+    document.querySelectorAll(".termino-item").forEach(i => {
+      if (i !== item) i.classList.remove("active");
+    });
+
+    item.classList.toggle("active");
+  });
+});
