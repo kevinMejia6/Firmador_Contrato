@@ -228,30 +228,7 @@ document
       }
     }, 1200);
   });
-  function addSectionTitle(text) {
-
-    if (y > pageHeight - 40) {
-      newPage();
-    }
   
-    doc.setFont("times", "bold");
-    doc.setTextColor(0, 51, 102);
-    doc.setFontSize(11);
-  
-    doc.text(text, margin, y);
-    y += 5;
-  
-    doc.setDrawColor(0, 51, 102);
-    doc.setLineWidth(0.4);
-    doc.line(margin, y, pageWidth - margin, y);
-  
-    y += 6;
-  
-    // Reset a normal para el contenido
-    doc.setFont("times", "normal");
-    doc.setTextColor(0);
-    doc.setFontSize(9);
-  }
 function generarPDF() {
   const { jsPDF } = window.jspdf;
 
@@ -384,7 +361,27 @@ function generarPDF() {
     });
     y += 0.5;
   }
-
+  function addSectionTitle(text) {
+    if (y > pageHeight - 40) {
+      newPage();
+    }
+  
+    doc.setFont("times", "bold");
+    doc.setTextColor(0, 51, 102);
+    doc.setFontSize(10);
+  
+    doc.text(text, margin, y);
+    y += 4.5;
+  
+    doc.setDrawColor(0, 51, 102);
+    doc.setLineWidth(0.35);
+    doc.line(margin, y, pageWidth - margin, y);
+  
+    y += 5;
+  
+    doc.setFont("times", "normal");
+    doc.setTextColor(0);
+  }
   header();
   footer();
 
